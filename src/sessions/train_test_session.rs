@@ -1,3 +1,5 @@
+use indicatif::ProgressBar;
+use polars::prelude::*;
 use rand::Rng;
 
 use super::Session;
@@ -25,7 +27,7 @@ impl TrainTestSession {
 }
 
 impl Session for TrainTestSession {
-    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T)
+    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where
         A: Action,
         R: Reward,
@@ -36,8 +38,14 @@ impl Session for TrainTestSession {
         E: Env<A, R, S>,
         T: Rng + ?Sized,
     {
+        // Allocate memory for data collection.
+        let capacity = self.folds * self.test;
+        let mut rewd = Vec::with_capacity(capacity);
+        let mut fold = Vec::with_capacity(capacity);
+        // Initialize progress bar.
+        let progress = ProgressBar::new((self.folds * self.train) as u64);
         // For each fold ...
-        for _ in 0..self.folds {
+        for i in 0..self.folds {
             // ... perform n train episodes, then ...
             for _ in 0..self.train {
                 // Declare future reward.
@@ -51,10 +59,12 @@ impl Session for TrainTestSession {
                     // ... get the action for the current state ...
                     let action = agent.call(&state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action);
+                    (reward, state, is_done) = environment.call_mut(&action, rng);
                     // ... update the agent.
                     agent.update(&action, &reward, &state, is_done);
                 }
+                // Update progress.
+                progress.inc(1);
             }
             // ... perform m test episodes.
             for _ in 0..self.test {
@@ -69,11 +79,19 @@ impl Session for TrainTestSession {
                     // ... get the action for the current state ...
                     let action = agent.call(&state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action);
-                    // TODO: ... record the obtained reward.
-                    println!("r: {:?}", reward);
+                    (reward, state, is_done) = environment.call_mut(&action, rng);
+                    // ... record the obtained reward.
+                    rewd.push(reward.as_());
+                    fold.push(i as u64);
                 }
             }
         }
+        // Close progress.
+        progress.finish();
+
+        // Cast data to polars DataFrame.
+        let rewd = ChunkedArray::<Float64Type>::from_vec("reward", rewd).into_series();
+        let fold = ChunkedArray::<UInt64Type>::from_vec("fold", fold).into_series();
+        DataFrame::new(vec![fold, rewd]).expect("Unable to cast collected results to DataFrame")
     }
 }

@@ -1,9 +1,11 @@
 use std::fmt::Debug;
 
+use rand::Rng;
+
 use crate::types::{Action, Reward, State};
 
 /// Definition of an environment.
-pub trait Env<A, R, S>: Clone + Debug + Default
+pub trait Env<A, R, S>: Clone + Debug
 where
     A: Action,
     R: Reward,
@@ -20,7 +22,9 @@ where
 
     /// Compute the effect of an action on the environment,
     /// returning the obtained reward, next state and end-of-episode flag.
-    fn call_mut(&mut self, action: &A) -> (R, S, bool);
+    fn call_mut<T>(&mut self, action: &A, rng: &mut T) -> (R, S, bool)
+    where
+        T: Rng + ?Sized;
 
     /// Resets the environment state.
     fn reset(&mut self) -> &mut Self;

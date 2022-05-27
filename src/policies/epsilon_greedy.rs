@@ -24,7 +24,8 @@ impl EpsilonGreedy {
         Self {
             epsilon_0: epsilon,
             epsilon,
-            ..Default::default()
+            greedy: Default::default(),
+            random: Default::default(),
         }
     }
 }

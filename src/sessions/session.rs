@@ -1,3 +1,4 @@
+use polars::prelude::*;
 use rand::Rng;
 
 use crate::{
@@ -11,7 +12,7 @@ use crate::{
 /// Definition of agent-environment experiment session.
 pub trait Session {
     /// Execute the experiment session.
-    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T)
+    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where
         A: Action,
         R: Reward,
