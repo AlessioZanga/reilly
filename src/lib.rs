@@ -4,6 +4,8 @@
 //! A REInforcement Learning LibrarY.
 
 /// Generic reinforcement learning agents.
+pub mod agents;
+
 /// Collection of agent's policies.
 pub mod policies;
 
