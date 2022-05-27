@@ -9,7 +9,7 @@ use crate::{
 pub struct Greedy {}
 
 impl Policy for Greedy {
-    fn call<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
+    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
     where
         A: Action,
         R: Reward,

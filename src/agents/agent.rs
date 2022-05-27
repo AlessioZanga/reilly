@@ -17,7 +17,7 @@ where
     fn new(pi: P, v: V) -> Self;
 
     /// Computes the action for given state.
-    fn call(&mut self, state: &S) -> &A;
+    fn call_mut(&mut self, state: &S) -> &A;
 
     /// Resets the agent.
     fn reset(&mut self);

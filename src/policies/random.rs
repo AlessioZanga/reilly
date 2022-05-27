@@ -50,7 +50,7 @@ impl<T> Policy for Random<T>
 where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
-    fn call<'a, A, R, S, V>(&mut self, f: &'a V, _state: &S) -> &'a A
+    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, _state: &S) -> &'a A
     where
         A: Action,
         R: Reward,

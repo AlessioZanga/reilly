@@ -27,7 +27,7 @@ mod policies {
             let v =
                 Arms::from_actions_arms_iter(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
-            assert_eq!(pi.call(&v, &()), &j);
+            assert_eq!(pi.call_mut(&v, &()), &j);
         }
     }
 
@@ -37,7 +37,7 @@ mod policies {
         let mut pi: Greedy = Default::default();
         let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
-        pi.call(&v, &());
+        pi.call_mut(&v, &());
     }
 
     #[test]
@@ -63,7 +63,7 @@ mod policies {
             let relative_frequency = 1. / v.actions_iter().len() as f64;
 
             for _ in 0..size {
-                let a = pi.call(&v, &());
+                let a = pi.call_mut(&v, &());
                 *count.entry(*a).or_default() += 1;
             }
 
@@ -84,6 +84,6 @@ mod policies {
         let mut pi: Random<Xoshiro256PlusPlus> = Default::default();
         let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
-        pi.call(&v, &());
+        pi.call_mut(&v, &());
     }
 }

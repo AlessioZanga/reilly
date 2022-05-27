@@ -117,9 +117,9 @@ where
         }
     }
 
-    fn call(&mut self, state: &S) -> &A {
+    fn call_mut(&mut self, state: &S) -> &A {
         // Evaluate the value function for each action.
-        self.pi.call(&mut self.v, state)
+        self.pi.call_mut(&mut self.v, state)
     }
 
     fn reset(&mut self) {

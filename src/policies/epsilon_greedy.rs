@@ -75,7 +75,7 @@ impl<T> Policy for EpsilonGreedy<T>
 where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
-    fn call<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
+    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
     where
         A: Action,
         R: Reward,
@@ -87,9 +87,9 @@ where
         // With probability (1 - epsilon) ...
         match p < (1. - self.epsilon) {
             // ... select an action greedily, otherwise ...
-            false => self.greedy.call(f, state),
+            false => self.greedy.call_mut(f, state),
             // ... select a random action form the action space.
-            true => self.random.call(f, state),
+            true => self.random.call_mut(f, state),
         }
     }
 
