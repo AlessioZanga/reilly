@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use indicatif::ProgressBar;
 use polars::prelude::*;
 use rand::Rng;
@@ -38,6 +40,17 @@ impl Session for TrainTestSession {
         E: Env<A, R, S>,
         T: Rng + ?Sized,
     {
+        // Assert same action- and state-space.
+        assert_eq!(
+            HashSet::<&A>::from_iter(agent.actions_iter()),
+            HashSet::<&A>::from_iter(environment.actions_iter()),
+            "Agent and environment have different actions-space"
+        );
+        assert_eq!(
+            HashSet::<&S>::from_iter(agent.states_iter()),
+            HashSet::<&S>::from_iter(environment.states_iter()),
+            "Agent and environment have different states-space"
+        );
         // Allocate memory for data collection.
         let capacity = self.folds * self.test;
         let mut rewd = Vec::with_capacity(capacity);

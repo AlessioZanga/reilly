@@ -15,6 +15,12 @@ where
     P: Policy,
     V: StateActionValue<A, R, S>,
 {
+    /// Iterates of the action space.
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
+
+    /// Iterates of the state space.
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a>;
+
     /// Constructs an agent given a policy and a (state-)action value function.
     fn new(pi: P, v: V) -> Self;
 

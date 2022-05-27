@@ -107,6 +107,14 @@ where
     P: Policy,
     V: StateActionValue<A, R, S>,
 {
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
+        self.v.actions_iter()
+    }
+
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a> {
+        self.v.states_iter()
+    }
+
     fn new(pi: P, v: V) -> Self
     where
         P: Policy,
