@@ -6,6 +6,9 @@
 /// Generic reinforcement learning agents.
 pub mod agents;
 
+/// Collection of environments.
+pub mod envs;
+
 /// Collection of agent's policies.
 pub mod policies;
 

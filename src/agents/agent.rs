@@ -22,6 +22,6 @@ where
     /// Resets the agent.
     fn reset(&mut self);
 
-    /// Updates the agent given performed action, obtained reward, next state, and end-of-episode flag.
+    /// Updates the agent given performed action, obtained reward, next state and end-of-episode flag.
     fn update(&mut self, action: &A, reward: R, state: S, is_done: bool);
 }
