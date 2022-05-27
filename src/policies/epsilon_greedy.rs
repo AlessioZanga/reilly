@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use rand::prelude::*;
+use rand_distr::Uniform;
 
 use super::{Greedy, Policy, Random};
 use crate::{
@@ -14,8 +15,11 @@ pub struct EpsilonGreedy<T>
 where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
-    init_epsilon: f64,
+    epsilon_0: f64,
     epsilon: f64,
+    seed: Option<u64>,
+    rng: T,
+    // Helper policies.
     greedy: Greedy,
     random: Random<T>,
 }
@@ -26,13 +30,21 @@ where
 {
     /// Constructs a random policy given an optional seed.
     pub fn new(epsilon: f64, seed: Option<u64>) -> Self {
+        // Seed the random number generator.
+        let rng = match seed {
+            Some(seed) => SeedableRng::seed_from_u64(seed),
+            None => SeedableRng::from_entropy(),
+        };
         // Initialize helper policies.
         let greedy = Greedy::default();
         let random = Random::new(seed);
 
         Self {
-            init_epsilon: epsilon,
+            epsilon_0: epsilon,
             epsilon,
+            seed,
+            rng,
+            // Helper policies.
             greedy,
             random,
         }
@@ -44,9 +56,15 @@ where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
     fn default() -> Self {
+        // Seed the random number generator from entropy.
+        let rng = SeedableRng::from_entropy();
+
         Self {
-            init_epsilon: 0.1,
+            epsilon_0: 0.1,
             epsilon: 0.1,
+            seed: None,
+            rng,
+            // Default helper policies.
             greedy: Default::default(),
             random: Default::default(),
         }
@@ -64,8 +82,10 @@ where
         S: State,
         V: StateActionValue<A, R, S>,
     {
-        // FIXME: With probability (1 - epsilon) ...
-        match true {
+        // Sample probability.
+        let p = Uniform::new(0., 1.).sample(&mut self.rng);
+        // With probability (1 - epsilon) ...
+        match p < (1. - self.epsilon) {
             // ... select an action greedily, otherwise ...
             false => self.greedy.call(f, state),
             // ... select a random action form the action space.
@@ -75,8 +95,13 @@ where
 
     fn reset(&mut self) {
         // Reset epsilon.
-        self.epsilon = self.init_epsilon;
-        // Reset helpers.
+        self.epsilon = self.epsilon_0;
+        // Re-seed the random number generator.
+        self.rng = match self.seed {
+            Some(seed) => SeedableRng::seed_from_u64(seed),
+            None => SeedableRng::from_entropy(),
+        };
+        // Reset helper policies.
         self.greedy.reset();
         self.random.reset();
     }
