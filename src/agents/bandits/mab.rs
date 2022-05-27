@@ -65,7 +65,7 @@ where
     }
 
     fn call(&self, action: &A) -> R {
-        self.arms[&action].call()
+        self.arms[action].call()
     }
 
     fn reset(&mut self) -> &mut Self {
