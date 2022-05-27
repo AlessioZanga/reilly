@@ -1,0 +1,24 @@
+[package]
+name = "reilly"
+version = "0.0.0"
+edition = "2021"
+authors = ["Alessio Zanga <alessio.zanga@outlook.it>"]
+description = "A REInforcement Learning LibrarY."
+readme = "README.md"
+license = "Apache-2.0 OR MIT"
+homepage = "https://github.com/AlessioZanga/reilly"
+repository = "https://github.com/AlessioZanga/reilly"
+documentation = "https://docs.rs/reilly"
+keywords = ["ai", "reinforcement", "learning"]
+categories = ["algorithms", "mathematics", "science"]
+
+[dependencies]
+rand = "^0.8"
+rand_distr = "^0.4"
+
+[dev-dependencies]
+approx = "^0.5"
+rand_xoshiro = "^0.6"
+
+[profile.coverage]
+inherits = "dev"
