@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     policies::Policy,
     types::{Action, Reward, State},
@@ -17,7 +19,9 @@ where
     fn new(pi: P, v: V) -> Self;
 
     /// Computes the action for given state.
-    fn call_mut(&mut self, state: &S) -> A;
+    fn call<T>(&self, state: &S, rng: &mut T) -> A
+    where
+        T: Rng + ?Sized;
 
     /// Resets the agent.
     fn reset(&mut self) -> &mut Self;

@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use super::Session;
 use crate::{
     agents::Agent,
@@ -23,15 +25,16 @@ impl TrainTestSession {
 }
 
 impl Session for TrainTestSession {
-    fn call<A, R, S, P, V, T, E>(&self, agent: &mut T, environment: &mut E)
+    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T)
     where
         A: Action,
         R: Reward,
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        T: Agent<A, R, S, P, V>,
+        G: Agent<A, R, S, P, V>,
         E: Env<A, R, S>,
+        T: Rng + ?Sized,
     {
         // For each fold ...
         for _ in 0..self.folds {
@@ -46,7 +49,7 @@ impl Session for TrainTestSession {
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
-                    let action = agent.call_mut(&state);
+                    let action = agent.call(&state, rng);
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(&action);
                     // ... update the agent.
@@ -64,7 +67,7 @@ impl Session for TrainTestSession {
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
-                    let action = agent.call_mut(&state);
+                    let action = agent.call(&state, rng);
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(&action);
                     // TODO: ... record the obtained reward.

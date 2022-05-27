@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use super::Policy;
 use crate::{
     types::{Action, Reward, State},
@@ -9,12 +11,13 @@ use crate::{
 pub struct Greedy {}
 
 impl Policy for Greedy {
-    fn call_mut<A, R, S, V>(&mut self, f: &V, state: &S) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: &S, _rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
         S: State,
         V: StateActionValue<A, R, S>,
+        T: Rng + ?Sized,
     {
         // For each action ...
         f.actions_iter()

@@ -36,7 +36,7 @@ where
     fn call(&self, action: &A, state: &S) -> R;
 
     /// Resets the function.
-    fn reset(&mut self)-> &mut Self;
+    fn reset(&mut self) -> &mut Self;
 
     /// Updates the agent given performed action, obtained reward and next state.
     fn update(&mut self, action: &A, reward: &R, state: &S);

@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     agents::Agent,
     envs::Env,
@@ -9,13 +11,14 @@ use crate::{
 /// Definition of agent-environment experiment session.
 pub trait Session {
     /// Execute the experiment session.
-    fn call<A, R, S, P, V, T, E>(&self, agent: &mut T, environment: &mut E)
+    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T)
     where
         A: Action,
         R: Reward,
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        T: Agent<A, R, S, P, V>,
-        E: Env<A, R, S>;
+        G: Agent<A, R, S, P, V>,
+        E: Env<A, R, S>,
+        T: Rng + ?Sized;
 }

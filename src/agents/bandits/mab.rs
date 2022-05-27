@@ -1,5 +1,7 @@
 use std::{collections::HashMap, marker::PhantomData};
 
+use rand::Rng;
+
 use super::arms::Arm;
 use crate::{
     agents::Agent,
@@ -119,12 +121,15 @@ where
         }
     }
 
-    fn call_mut(&mut self, state: &S) -> A {
+    fn call<T>(&self, state: &S, rng: &mut T) -> A
+    where
+        T: Rng + ?Sized,
+    {
         // Evaluate the value function for each action.
-        self.pi.call_mut(&mut self.v, state)
+        self.pi.call(&self.v, state, rng)
     }
 
-    fn reset(&mut self) -> &mut Self{
+    fn reset(&mut self) -> &mut Self {
         self.pi.reset();
         self.v.reset();
 

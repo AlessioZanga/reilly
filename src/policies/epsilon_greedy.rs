@@ -11,96 +11,53 @@ use crate::{
 
 /// Epsilon-greedy policy.
 #[derive(Clone, Debug)]
-pub struct EpsilonGreedy<T>
-where
-    T: Clone + Debug + Rng + SeedableRng + ?Sized,
-{
+pub struct EpsilonGreedy {
     epsilon_0: f64,
     epsilon: f64,
-    seed: Option<u64>,
-    rng: T,
-    // Helper policies.
     greedy: Greedy,
-    random: Random<T>,
+    random: Random,
 }
 
-impl<T> EpsilonGreedy<T>
-where
-    T: Clone + Debug + Rng + SeedableRng + ?Sized,
-{
-    /// Constructs a random policy given an optional seed.
-    pub fn new(epsilon: f64, seed: Option<u64>) -> Self {
-        // Seed the random number generator.
-        let rng = match seed {
-            Some(seed) => SeedableRng::seed_from_u64(seed),
-            None => SeedableRng::from_entropy(),
-        };
-        // Initialize helper policies.
-        let greedy = Greedy::default();
-        let random = Random::new(seed);
-
+impl EpsilonGreedy {
+    /// Constructs a random policy.
+    pub fn new(epsilon: f64) -> Self {
         Self {
             epsilon_0: epsilon,
             epsilon,
-            seed,
-            rng,
-            // Helper policies.
-            greedy,
-            random,
+            ..Default::default()
         }
     }
 }
 
-impl<T> Default for EpsilonGreedy<T>
-where
-    T: Clone + Debug + Rng + SeedableRng + ?Sized,
-{
+impl Default for EpsilonGreedy {
     fn default() -> Self {
-        // Seed the random number generator from entropy.
-        let rng = SeedableRng::from_entropy();
-
-        Self {
-            epsilon_0: 0.1,
-            epsilon: 0.1,
-            seed: None,
-            rng,
-            // Default helper policies.
-            greedy: Default::default(),
-            random: Default::default(),
-        }
+        Self::new(0.1)
     }
 }
 
-impl<T> Policy for EpsilonGreedy<T>
-where
-    T: Clone + Debug + Rng + SeedableRng + ?Sized,
-{
-    fn call_mut<A, R, S, V>(&mut self, f: &V, state: &S) -> A
+impl Policy for EpsilonGreedy {
+    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
         S: State,
         V: StateActionValue<A, R, S>,
+        T: Rng + ?Sized,
     {
         // Sample probability.
-        let p = Uniform::new(0., 1.).sample(&mut self.rng);
+        let p = Uniform::new(0., 1.).sample(rng);
         // With probability (1 - epsilon) ...
         match p < (1. - self.epsilon) {
             // ... select an action greedily, otherwise ...
-            false => self.greedy.call_mut(f, state),
+            false => self.greedy.call(f, state, rng),
             // ... select a random action form the action space.
-            true => self.random.call_mut(f, state),
+            true => self.random.call(f, state, rng),
         }
     }
 
     fn reset(&mut self) {
         // Reset epsilon.
         self.epsilon = self.epsilon_0;
-        // Re-seed the random number generator.
-        self.rng = match self.seed {
-            Some(seed) => SeedableRng::seed_from_u64(seed),
-            None => SeedableRng::from_entropy(),
-        };
         // Reset helper policies.
         self.greedy.reset();
         self.random.reset();

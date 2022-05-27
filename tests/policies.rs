@@ -2,6 +2,7 @@ mod policies {
     use std::collections::HashMap;
 
     use approx::*;
+    use rand::SeedableRng;
     use rand_xoshiro::Xoshiro256PlusPlus;
     use reilly::{
         agents::bandits::{arms::Bernoulli, Arms},
@@ -11,6 +12,8 @@ mod policies {
 
     #[test]
     pub fn greedy() {
+        // Initialize the random number generator.
+        let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
         // [(a, (alpha, beta))]
         let data = [
             (vec![(0, (1., 1.))], 0),
@@ -23,25 +26,31 @@ mod policies {
         ];
 
         for (i, j) in data {
-            let mut pi: Greedy = Default::default();
+            let pi: Greedy = Default::default();
             let v =
                 Arms::from_actions_arms_iter(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
-            assert_eq!(pi.call_mut(&v, &()), j);
+            assert_eq!(pi.call(&v, &(), &mut rng), j);
         }
     }
 
     #[test]
     #[should_panic]
     pub fn greedy_should_panic() {
-        let mut pi: Greedy = Default::default();
+        // Initialize the random number generator.
+        let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+        let pi: Greedy = Default::default();
         let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
-        pi.call_mut(&v, &());
+        pi.call(&v, &(), &mut rng);
     }
 
     #[test]
     pub fn random() {
+        // Initialize the random number generator.
+        let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
         // [(a, (alpha, beta))]
         let data = [
             vec![(0, (1., 1.))],
@@ -54,7 +63,7 @@ mod policies {
         ];
 
         for i in data {
-            let mut pi: Random<Xoshiro256PlusPlus> = Default::default();
+            let pi: Random = Default::default();
             let v =
                 Arms::from_actions_arms_iter(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
@@ -63,7 +72,7 @@ mod policies {
             let relative_frequency = 1. / v.actions_iter().len() as f64;
 
             for _ in 0..size {
-                let a = pi.call_mut(&v, &());
+                let a = pi.call(&v, &(), &mut rng);
                 *count.entry(a).or_default() += 1;
             }
 
@@ -81,9 +90,12 @@ mod policies {
     #[test]
     #[should_panic]
     pub fn random_should_panic() {
-        let mut pi: Random<Xoshiro256PlusPlus> = Default::default();
+        // Initialize the random number generator.
+        let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+        let pi: Random = Default::default();
         let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
-        pi.call_mut(&v, &());
+        pi.call(&v, &(), &mut rng);
     }
 }
