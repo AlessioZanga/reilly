@@ -18,7 +18,7 @@ where
     /// Gets current state of the environment.
     fn get_state(&self) -> S;
 
-    /// Compute the effect of an action on the enviroment,
+    /// Compute the effect of an action on the environment,
     /// returning the obtained reward, next state and end-of-episode flag.
     fn call_mut(&mut self, action: &A) -> (R, S, bool);
 
