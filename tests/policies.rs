@@ -27,7 +27,7 @@ mod policies {
             let v =
                 Arms::from_actions_arms_iter(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
-            assert_eq!(pi.call_mut(&v, &()), &j);
+            assert_eq!(pi.call_mut(&v, &()), j);
         }
     }
 
@@ -64,7 +64,7 @@ mod policies {
 
             for _ in 0..size {
                 let a = pi.call_mut(&v, &());
-                *count.entry(*a).or_default() += 1;
+                *count.entry(a).or_default() += 1;
             }
 
             for (_, c) in count {

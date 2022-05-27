@@ -13,10 +13,10 @@ where
     fn call(&self, action: &A) -> R;
 
     /// Resets the function.
-    fn reset(&mut self);
+    fn reset(&mut self) -> &mut Self;
 
     /// Updates the agent given performed action and obtained reward.
-    fn update(&mut self, action: &A, reward: R);
+    fn update(&mut self, action: &A, reward: &R);
 }
 
 /// Definition of the state-action value function.
@@ -36,10 +36,10 @@ where
     fn call(&self, action: &A, state: &S) -> R;
 
     /// Resets the function.
-    fn reset(&mut self);
+    fn reset(&mut self)-> &mut Self;
 
     /// Updates the agent given performed action, obtained reward and next state.
-    fn update(&mut self, action: &A, reward: R, state: S);
+    fn update(&mut self, action: &A, reward: &R, state: &S);
 }
 
 // Auto-implements state-action value function for action value function
@@ -63,11 +63,11 @@ where
         self.call(action)
     }
 
-    fn reset(&mut self) {
+    fn reset(&mut self) -> &mut Self {
         self.reset()
     }
 
-    fn update(&mut self, action: &A, reward: R, _state: ()) {
+    fn update(&mut self, action: &A, reward: &R, _state: &()) {
         self.update(action, reward);
     }
 }

@@ -17,11 +17,11 @@ where
     fn new(pi: P, v: V) -> Self;
 
     /// Computes the action for given state.
-    fn call_mut(&mut self, state: &S) -> &A;
+    fn call_mut(&mut self, state: &S) -> A;
 
     /// Resets the agent.
-    fn reset(&mut self);
+    fn reset(&mut self) -> &mut Self;
 
     /// Updates the agent given performed action, obtained reward, next state and end-of-episode flag.
-    fn update(&mut self, action: &A, reward: R, state: S, is_done: bool);
+    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool);
 }

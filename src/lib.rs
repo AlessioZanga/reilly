@@ -9,6 +9,9 @@ pub mod agents;
 /// Collection of environments.
 pub mod envs;
 
+/// Generic agent-environment experiment sessions.
+pub mod sessions;
+
 /// Collection of agent's policies.
 pub mod policies;
 

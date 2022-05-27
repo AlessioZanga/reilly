@@ -75,7 +75,7 @@ impl<T> Policy for EpsilonGreedy<T>
 where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
-    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
+    fn call_mut<A, R, S, V>(&mut self, f: &V, state: &S) -> A
     where
         A: Action,
         R: Reward,

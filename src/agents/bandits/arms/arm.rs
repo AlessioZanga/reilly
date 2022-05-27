@@ -19,5 +19,5 @@ where
     fn sample<T: Rng + ?Sized>(&self, rng: &mut T) -> R;
 
     /// Update the  underlying distribution parameters.
-    fn update(&mut self, reward: R);
+    fn update(&mut self, reward: &R);
 }

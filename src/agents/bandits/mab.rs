@@ -66,14 +66,16 @@ where
         self.arms[&action].call()
     }
 
-    fn reset(&mut self) {
+    fn reset(&mut self) -> &mut Self {
         self.arms.iter_mut().for_each(|(_, arm)| arm.reset());
+
+        self
     }
 
-    fn update(&mut self, action: &A, reward: R) {
+    fn update(&mut self, action: &A, reward: &R) {
         // Update the arm association with performed action given the obtained reward.
         self.arms
-            .get_mut(&action)
+            .get_mut(action)
             .expect("Unable to get bandit's arm for given action")
             .update(reward)
     }
@@ -117,17 +119,19 @@ where
         }
     }
 
-    fn call_mut(&mut self, state: &S) -> &A {
+    fn call_mut(&mut self, state: &S) -> A {
         // Evaluate the value function for each action.
         self.pi.call_mut(&mut self.v, state)
     }
 
-    fn reset(&mut self) {
+    fn reset(&mut self) -> &mut Self{
         self.pi.reset();
         self.v.reset();
+
+        self
     }
 
-    fn update(&mut self, action: &A, reward: R, state: S, _is_done: bool) {
+    fn update(&mut self, action: &A, reward: &R, state: &S, _is_done: bool) {
         // Update the (state-)action value function.
         self.v.update(action, reward, state)
     }

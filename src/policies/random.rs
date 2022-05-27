@@ -50,7 +50,7 @@ impl<T> Policy for Random<T>
 where
     T: Clone + Debug + Rng + SeedableRng + ?Sized,
 {
-    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, _state: &S) -> &'a A
+    fn call_mut<A, R, S, V>(&mut self, f: &V, _state: &S) -> A
     where
         A: Action,
         R: Reward,
@@ -61,6 +61,7 @@ where
         f.actions_iter()
             .choose(&mut self.rng)
             .expect("Unable to choose an action")
+            .clone()
     }
 
     fn reset(&mut self) {

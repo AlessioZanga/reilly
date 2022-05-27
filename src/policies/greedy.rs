@@ -9,7 +9,7 @@ use crate::{
 pub struct Greedy {}
 
 impl Policy for Greedy {
-    fn call_mut<'a, A, R, S, V>(&mut self, f: &'a V, state: &S) -> &'a A
+    fn call_mut<A, R, S, V>(&mut self, f: &V, state: &S) -> A
     where
         A: Action,
         R: Reward,
@@ -31,6 +31,7 @@ impl Policy for Greedy {
             .map(|(a, _)| a)
             // ... or panic if sequence is empty.
             .expect("Unable to choose an action")
+            .clone()
     }
 
     fn reset(&mut self) {}

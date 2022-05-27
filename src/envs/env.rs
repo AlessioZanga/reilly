@@ -1,5 +1,6 @@
-use crate::types::{Action, Reward, State};
 use std::fmt::Debug;
+
+use crate::types::{Action, Reward, State};
 
 /// Definition of an environment.
 pub trait Env<A, R, S>: Clone + Debug + Default
@@ -19,8 +20,8 @@ where
 
     /// Compute the effect of an action on the enviroment,
     /// returning the obtained reward, next state and end-of-episode flag.
-    fn call_mut(&mut self, action: A) -> (R, S, bool);
+    fn call_mut(&mut self, action: &A) -> (R, S, bool);
 
     /// Resets the environment state.
-    fn reset(&mut self);
+    fn reset(&mut self) -> &mut Self;
 }

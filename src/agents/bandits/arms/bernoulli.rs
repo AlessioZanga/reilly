@@ -45,7 +45,7 @@ impl Arm<f64> for Bernoulli {
     }
 
     #[allow(unused_parens)]
-    fn update(&mut self, reward: f64) {
+    fn update(&mut self, reward: &f64) {
         // Update distributions parameter.
         self.alpha += reward;
         self.beta += (1. - reward);
