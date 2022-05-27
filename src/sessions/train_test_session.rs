@@ -105,6 +105,6 @@ impl Session for TrainTestSession {
         // Cast data to polars DataFrame.
         let rewd = ChunkedArray::<Float64Type>::from_vec("reward", rewd).into_series();
         let fold = ChunkedArray::<UInt64Type>::from_vec("fold", fold).into_series();
-        DataFrame::new(vec![fold, rewd]).expect("Unable to cast collected results to DataFrame")
+        DataFrame::new(vec![fold, rewd]).expect("Unable to cast collected data to DataFrame")
     }
 }
