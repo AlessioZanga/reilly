@@ -46,24 +46,25 @@ mod policies {
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn reset() {
-            todo!()
+            let mut pi: Greedy = Default::default();
+
+            pi.reset();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn serialize() {
-            todo!()
+            let pi: Greedy = Default::default();
+
+            serde_json::to_string(&pi).unwrap();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn deserialize() {
-            todo!()
+            let pi: Greedy = Default::default();
+
+            let json = serde_json::to_string(&pi).unwrap();
+            let _: Greedy = serde_json::from_str(&json).unwrap();
         }
     }
 
@@ -134,24 +135,25 @@ mod policies {
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn reset() {
-            todo!()
+            let mut pi: Random = Default::default();
+
+            pi.reset();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn serialize() {
-            todo!()
+            let pi: Random = Default::default();
+
+            serde_json::to_string(&pi).unwrap();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn deserialize() {
-            todo!()
+            let pi: Random = Default::default();
+
+            let json = serde_json::to_string(&pi).unwrap();
+            let _: Random = serde_json::from_str(&json).unwrap();
         }
     }
 }
