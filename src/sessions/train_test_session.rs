@@ -18,13 +18,13 @@ use crate::{
 pub struct TrainTestSession {
     train: usize,
     test: usize,
-    folds: usize,
+    repeat: usize,
 }
 
 impl TrainTestSession {
     /// Constructs a train-test session.
-    pub fn new(train: usize, test: usize, folds: usize) -> Self {
-        Self { train, test, folds }
+    pub fn new(train: usize, test: usize, repeat: usize) -> Self {
+        Self { train, test, repeat }
     }
 }
 
@@ -52,13 +52,14 @@ impl Session for TrainTestSession {
             "Agent and environment have different states-space"
         );
         // Allocate memory for data collection.
-        let capacity = self.folds * self.test;
+        let capacity = self.repeat * self.test;
         let mut rewd = Vec::with_capacity(capacity);
-        let mut fold = Vec::with_capacity(capacity);
+        let mut test = Vec::with_capacity(capacity);
+        let mut reps = Vec::with_capacity(capacity);
         // Initialize progress bar.
-        let progress = ProgressBar::new((self.folds * self.train) as u64);
+        let progress = ProgressBar::new((self.repeat * self.train) as u64);
         // For each fold ...
-        for i in 0..self.folds {
+        for i in 0..self.repeat {
             // ... perform n train episodes, then ...
             for _ in 0..self.train {
                 // Declare future reward.
@@ -80,11 +81,13 @@ impl Session for TrainTestSession {
                 progress.inc(1);
             }
             // ... perform m test episodes.
-            for _ in 0..self.test {
+            for j in 0..self.test {
                 // Reset the environment and get its initial state.
                 let mut state = environment.reset().get_state();
                 // Set is_done flag to false.
                 let mut is_done = false;
+                // Init the cumulative reward.
+                let mut cum_reward = 0.;
                 // Declare reward.
                 let mut reward;
                 // While the episode is not over ...
@@ -93,10 +96,13 @@ impl Session for TrainTestSession {
                     let action = agent.call(&state, rng);
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(&action, rng);
-                    // ... record the obtained reward.
-                    rewd.push(reward.as_());
-                    fold.push(i as u64);
+                    // ... update the cumulative reward.
+                    cum_reward += reward.as_();
                 }
+                // Record the cumulative reward.
+                rewd.push(cum_reward);
+                test.push(j as u64);
+                reps.push(i as u64);
             }
         }
         // Close progress.
@@ -104,7 +110,8 @@ impl Session for TrainTestSession {
 
         // Cast data to polars DataFrame.
         let rewd = ChunkedArray::<Float64Type>::from_vec("reward", rewd).into_series();
-        let fold = ChunkedArray::<UInt64Type>::from_vec("fold", fold).into_series();
-        DataFrame::new(vec![fold, rewd]).expect("Unable to cast collected data to DataFrame")
+        let test = ChunkedArray::<UInt64Type>::from_vec("test", test).into_series();
+        let reps = ChunkedArray::<UInt64Type>::from_vec("reps", reps).into_series();
+        DataFrame::new(vec![reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
     }
 }
