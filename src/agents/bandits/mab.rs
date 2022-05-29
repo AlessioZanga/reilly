@@ -1,6 +1,7 @@
 use std::{collections::HashMap, marker::PhantomData};
 
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 use super::arms::Arm;
 use crate::{
@@ -11,12 +12,14 @@ use crate::{
 };
 
 /// Action value function of a MAB.
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Arms<A, R, V>
 where
     A: Action,
     R: Reward,
     V: Arm<R>,
 {
+    #[serde(default, skip_serializing)]
     _r_marker: PhantomData<R>,
     arms: HashMap<A, V>,
 }
@@ -84,6 +87,7 @@ where
 }
 
 /// (Contextual) multi armed bandit agent (MAB).
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MultiArmedBandit<A, R, S, P, V>
 where
     A: Action,
@@ -92,8 +96,11 @@ where
     P: Policy,
     V: StateActionValue<A, R, S>,
 {
+    #[serde(default, skip_serializing)]
     _a_marker: PhantomData<A>,
+    #[serde(default, skip_serializing)]
     _r_marker: PhantomData<R>,
+    #[serde(default, skip_serializing)]
     _s_marker: PhantomData<S>,
     pi: P,
     v: V,
@@ -107,14 +114,6 @@ where
     P: Policy,
     V: StateActionValue<A, R, S>,
 {
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
-        self.v.actions_iter()
-    }
-
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a> {
-        self.v.states_iter()
-    }
-
     fn new(pi: P, v: V) -> Self
     where
         P: Policy,
@@ -127,6 +126,14 @@ where
             pi,
             v,
         }
+    }
+
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
+        self.v.actions_iter()
+    }
+
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a> {
+        self.v.states_iter()
     }
 
     fn call<T>(&self, state: &S, rng: &mut T) -> A

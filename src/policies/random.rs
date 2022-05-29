@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use rand::{prelude::IteratorRandom, Rng};
+use serde::{Deserialize, Serialize};
 
 use super::Policy;
 use crate::{
@@ -9,7 +10,7 @@ use crate::{
 };
 
 /// Random policy.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Random {}
 
 impl Random {}

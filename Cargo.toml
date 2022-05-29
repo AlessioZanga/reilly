@@ -13,15 +13,17 @@ keywords = ["ai", "reinforcement", "learning"]
 categories = ["algorithms", "mathematics", "science"]
 
 [dependencies]
+indicatif = "^0.16"
 num = "^0.4"
+polars = { version = "^0.21", features = ["dtype-slim"] }
 rand = "^0.8"
 rand_distr = "^0.4"
-polars = { version = "^0.21", features = ["dtype-slim"] }
-indicatif = "^0.16"
+serde = { version = "^1.0", features = ["derive"] }
 
 [dev-dependencies]
 approx = "^0.5"
 rand_xoshiro = "^0.6"
+serde_json = "^1.0"
 
 [profile.coverage]
 inherits = "dev"

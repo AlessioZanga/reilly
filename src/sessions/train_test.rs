@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use indicatif::{ProgressBar, ProgressStyle};
 use polars::prelude::*;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 use super::Session;
 use crate::{
@@ -15,20 +16,21 @@ use crate::{
 
 /// A train-test session, where an agent is trained for `n` episodes,
 /// then tested for `m` episodes, repeating the train-test process for `k` times.
-pub struct TrainTestSession {
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TrainTest {
     train: usize,
     test: usize,
     repeat: usize,
 }
 
-impl TrainTestSession {
+impl TrainTest {
     /// Constructs a train-test session.
     pub fn new(train: usize, test: usize, repeat: usize) -> Self {
         Self { train, test, repeat }
     }
 }
 
-impl Session for TrainTestSession {
+impl Session for TrainTest {
     fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where
         A: Action,
