@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use indicatif::ProgressBar;
+use indicatif::{ProgressBar, ProgressStyle};
 use polars::prelude::*;
 use rand::Rng;
 
@@ -57,7 +57,13 @@ impl Session for TrainTestSession {
         let mut test = Vec::with_capacity(capacity);
         let mut reps = Vec::with_capacity(capacity);
         // Initialize progress bar.
-        let progress = ProgressBar::new((self.repeat * self.train) as u64);
+        let progress = ProgressBar::new((self.repeat * self.train) as u64)
+            // Set progress message.
+            .with_message("Executing train-test");
+        // Set progress bar style.
+        progress.set_style(ProgressStyle::default_bar().template(
+            "{spinner} {msg}... ({percent}%) {wide_bar} [{pos}/{len}][{elapsed_precise}/{eta_precise}][{per_sec}]",
+        ));
         // For each fold ...
         for i in 0..self.repeat {
             // ... perform n train episodes, then ...
