@@ -1,52 +1,70 @@
 mod values {
     mod arms {
+        use std::collections::BTreeSet;
+
+        use reilly::{
+            agents::bandits::{arms::Bernoulli, Arms},
+            values::StateActionValue,
+        };
+
         #[test]
-        #[ignore]
-        // TODO:
         fn actions_iter() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let arms = Arms::from_actions_arms_iter(arms);
+
+            assert_eq!(
+                BTreeSet::from_iter(arms.actions_iter().copied()),
+                BTreeSet::from_iter(0..5)
+            );
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn states_iter() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let arms = Arms::from_actions_arms_iter(arms);
+
+            assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn call() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let arms = Arms::from_actions_arms_iter(arms);
+
+            arms.call(&0, &());
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn reset() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let mut arms = Arms::from_actions_arms_iter(arms);
+
+            arms.reset();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn update() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let mut arms = Arms::from_actions_arms_iter(arms);
+
+            arms.update(&0, &0., &());
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn serialize() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let arms = Arms::from_actions_arms_iter(arms);
+
+            serde_json::to_string(&arms).unwrap();
         }
 
         #[test]
-        #[ignore]
-        // TODO:
         fn deserialize() {
-            todo!()
+            let arms = (0..5).map(|a| (a, Bernoulli::default()));
+            let arms = Arms::from_actions_arms_iter(arms);
+
+            let json = serde_json::to_string(&arms).unwrap();
+            let _: Arms<i32, f64, Bernoulli> = serde_json::from_str(&json).unwrap();
         }
     }
 }
