@@ -1,4 +1,5 @@
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 use super::Policy;
 use crate::{
@@ -7,7 +8,7 @@ use crate::{
 };
 
 /// Greedy policy.
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
 pub struct Greedy {}
 
 impl Policy for Greedy {

@@ -1,48 +1,133 @@
 mod envs {
-    use std::fs::File;
+    mod far_west {
+        use std::collections::BTreeSet;
 
-    use polars::prelude::*;
-    use rand::SeedableRng;
-    use rand_distr::Normal;
-    use rand_xoshiro::Xoshiro256PlusPlus;
-    use reilly::{
-        agents::{
-            bandits::{arms::Bernoulli, Arms, MultiArmedBandit},
-            Agent,
-        },
-        envs::{Env, FarWest},
-        policies::EpsilonGreedy,
-        sessions::{Session, TrainTestSession},
-    };
+        use rand::SeedableRng;
+        use rand_distr::Normal;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::envs::{Env, FarWest};
 
-    #[test]
-    fn far_west() {
-        // Initialize the random number generator.
-        let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
-        // Initialize the env.
-        let env = [
-            Normal::new(0., 1.),
-            Normal::new(5., 2.),
-            Normal::new(1., 6.),
-            Normal::new(9., 4.),
-            Normal::new(7., 3.),
-        ]
-        .into_iter()
-        .map(|d| d.unwrap());
-        let mut env = FarWest::new(env, 1_000);
-        // Initialize the MAB.
-        let mab = env.actions_iter().map(|&a| (a, Bernoulli::default()));
-        let mut mab = MultiArmedBandit::new(
-            // Initialize an epsilon-greedy policy.
-            EpsilonGreedy::new(0.10),
-            // Construct a action value function.
-            Arms::from_actions_arms_iter(mab),
-        );
-        // Execute the experiment session.
-        let session = TrainTestSession::new(10, 3, 500);
-        let mut data = session.call(&mut mab, &mut env, &mut rng);
-        // Write data to CSV.
-        let mut file = File::create("tests/out.csv").unwrap();
-        CsvWriter::new(&mut file).has_header(true).finish(&mut data).unwrap();
+        #[test]
+        fn actions_iter() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let env = FarWest::new(env, 1_000);
+
+            assert_eq!(
+                BTreeSet::from_iter(env.actions_iter()),
+                BTreeSet::from_iter(vec![0, 1, 2, 3, 4].iter()),
+            );
+        }
+
+        #[test]
+        fn states_iter() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let env = FarWest::new(env, 1_000);
+
+            assert!(env.states_iter().eq([&()].into_iter()));
+        }
+
+        #[test]
+        fn get_state() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let env = FarWest::new(env, 1_000);
+
+            assert_eq!(env.get_state(), ());
+        }
+
+        #[test]
+        fn call_mut() {
+            // Initialize the random number generator.
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            // Initialize the env.
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let mut env = FarWest::new(env, 1_000);
+
+            env.call_mut(&0, &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let mut env = FarWest::new(env, 1_000);
+
+            env.reset();
+        }
+
+        #[test]
+        #[ignore]
+        // TODO:
+        fn serialize() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let _env = FarWest::new(env, 1_000);
+
+            // FIXME: serde_json::to_string(&env).unwrap();
+        }
+
+        #[test]
+        #[ignore]
+        // TODO:
+        fn deserialize() {
+            let env = [
+                Normal::new(0., 1.),
+                Normal::new(5., 2.),
+                Normal::new(1., 6.),
+                Normal::new(9., 4.),
+                Normal::new(7., 3.),
+            ]
+            .into_iter()
+            .map(|d| d.unwrap());
+            let _env = FarWest::new(env, 1_000);
+
+            // FIXME: let json = serde_json::to_string(&env).unwrap();
+            // FIXME: let _: FarWest<Normal<f64>> = serde_json::from_str(&json).unwrap();
+        }
     }
 }

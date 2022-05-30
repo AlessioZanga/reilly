@@ -1,10 +1,11 @@
 use rand::prelude::*;
 use rand_distr::Beta;
+use serde::{Deserialize, Serialize};
 
 use super::Arm;
 
 /// Bernoulli bandit arm.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct Bernoulli {
     init_alpha: f64,
     init_beta: f64,

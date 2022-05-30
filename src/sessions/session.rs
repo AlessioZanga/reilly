@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use polars::prelude::*;
 use rand::Rng;
 
@@ -10,7 +12,7 @@ use crate::{
 };
 
 /// Definition of agent-environment experiment session.
-pub trait Session {
+pub trait Session: Clone + Debug {
     /// Execute the experiment session.
     fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where

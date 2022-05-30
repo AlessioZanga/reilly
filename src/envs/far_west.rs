@@ -2,11 +2,12 @@ use std::fmt::Debug;
 
 use rand::Rng;
 use rand_distr::Distribution;
+use serde::{Deserialize, Serialize};
 
 use super::Env;
 
 /// Environment for multi-armed bandits given a sequence of distributions.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FarWest<D>
 where
     D: Clone + Debug + Distribution<f64>,

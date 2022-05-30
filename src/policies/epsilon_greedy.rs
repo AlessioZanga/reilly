@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 use rand::prelude::*;
 use rand_distr::Uniform;
+use serde::{Deserialize, Serialize};
 
 use super::{Greedy, Policy, Random};
 use crate::{
@@ -10,7 +11,7 @@ use crate::{
 };
 
 /// Epsilon-greedy policy.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct EpsilonGreedy {
     epsilon_0: f64,
     epsilon: f64,

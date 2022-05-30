@@ -1,7 +1,9 @@
+use std::fmt::Debug;
+
 use crate::types::{Action, Reward, State};
 
 /// Definition of the action value function.
-pub trait ActionValue<A, R>
+pub trait ActionValue<A, R>: Clone + Debug
 where
     A: Action,
     R: Reward,
@@ -20,7 +22,7 @@ where
 }
 
 /// Definition of the state-action value function.
-pub trait StateActionValue<A, R, S>
+pub trait StateActionValue<A, R, S>: Clone + Debug
 where
     A: Action,
     R: Reward,
