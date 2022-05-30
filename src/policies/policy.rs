@@ -9,7 +9,7 @@ use crate::{
 
 /// Definition of generic policy.
 pub trait Policy: Clone + Debug + Default {
-    /// Chooses the next action given a sequence of (action, expected_reward).
+    /// Chooses the next action given the (state-)value function and the current state.
     fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
     where
         A: Action,
