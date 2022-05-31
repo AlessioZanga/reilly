@@ -95,7 +95,7 @@ where
             // Sample from the distribution.
             ArmsAlgorithm::THOMPSON_SAMPLING => a.sample(rng),
             // Compute the expected value plus the upper confidence bound
-            // computed following UCB1: Q(a) + sqrt(2 * ln(t) / n).
+            // following the UCB1: Q(a) + sqrt(2 * ln(t) / n).
             ArmsAlgorithm::UCB1 => {
                 // Cast t and n.
                 let t = R::from(self.count).unwrap();
