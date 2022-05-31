@@ -20,4 +20,11 @@ pub trait Policy: Clone + Debug + Default {
 
     /// Resets the function.
     fn reset(&mut self);
+
+    /// Updates the policy given performed action, obtained reward, next state and end-of-episode flag.
+    fn update<A, R, S>(&mut self, action: &A, reward: &R, state: &S, is_done: bool)
+    where
+        A: Action,
+        R: Reward,
+        S: State;
 }

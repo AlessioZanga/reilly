@@ -11,6 +11,13 @@ use crate::{
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
 pub struct Greedy {}
 
+impl Greedy {
+    /// Constructs a greedy policy.
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
 impl Policy for Greedy {
     fn call<A, R, S, V, T>(&self, f: &V, state: &S, _rng: &mut T) -> A
     where
@@ -39,4 +46,12 @@ impl Policy for Greedy {
     }
 
     fn reset(&mut self) {}
+
+    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, _is_done: bool)
+    where
+        A: Action,
+        R: Reward,
+        S: State,
+    {
+    }
 }

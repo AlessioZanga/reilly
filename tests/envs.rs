@@ -55,7 +55,7 @@ mod envs {
             .map(|d| d.unwrap());
             let env = FarWest::new(env, 1_000);
 
-            assert_eq!(env.get_state(), ());
+            env.get_state();
         }
 
         #[test]
@@ -94,7 +94,7 @@ mod envs {
         }
 
         #[test]
-        #[ignore]
+        #[ignore = "rand_distr are not serializable yet"]
         // TODO:
         fn serialize() {
             let env = [
@@ -112,7 +112,7 @@ mod envs {
         }
 
         #[test]
-        #[ignore]
+        #[ignore = "rand_distr are not serializable yet"]
         // TODO:
         fn deserialize() {
             let env = [

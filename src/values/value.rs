@@ -17,8 +17,8 @@ where
     /// Resets the function.
     fn reset(&mut self) -> &mut Self;
 
-    /// Updates the agent given performed action and obtained reward.
-    fn update(&mut self, action: &A, reward: &R);
+    /// Updates the action-value function given performed action, obtained reward, next state and end-of-episode flag.
+    fn update(&mut self, action: &A, reward: &R, is_done: bool);
 }
 
 /// Definition of the state-action value function.
@@ -40,8 +40,8 @@ where
     /// Resets the function.
     fn reset(&mut self) -> &mut Self;
 
-    /// Updates the agent given performed action, obtained reward and next state.
-    fn update(&mut self, action: &A, reward: &R, state: &S);
+    /// Updates the state-value function given performed action, obtained reward, next state and end-of-episode flag.
+    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool);
 }
 
 // Auto-implements state-action value function for action value function
@@ -69,7 +69,7 @@ where
         self.reset()
     }
 
-    fn update(&mut self, action: &A, reward: &R, _state: &()) {
-        self.update(action, reward);
+    fn update(&mut self, action: &A, reward: &R, _state: &(), is_done: bool) {
+        self.update(action, reward, is_done);
     }
 }

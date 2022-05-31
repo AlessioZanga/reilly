@@ -12,7 +12,7 @@ mod sessions {
                 Agent,
             },
             envs::{Env, FarWest},
-            policies::EpsilonGreedy,
+            policies::EpsilonDecayGreedy,
             sessions::{Session, TrainTest},
         };
 
@@ -35,7 +35,7 @@ mod sessions {
             let mab = env.actions_iter().map(|&a| (a, Bernoulli::default()));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
-                EpsilonGreedy::new(0.10),
+                EpsilonDecayGreedy::default(),
                 // Construct a action value function.
                 Arms::from_actions_arms_iter(mab),
             );

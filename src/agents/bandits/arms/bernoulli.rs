@@ -7,8 +7,8 @@ use super::Arm;
 /// Bernoulli bandit arm.
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct Bernoulli {
-    init_alpha: f64,
-    init_beta: f64,
+    alpha_0: f64,
+    beta_0: f64,
     alpha: f64,
     beta: f64,
 }
@@ -19,8 +19,8 @@ impl Bernoulli {
         // FIXME: Sanitize inputs.
 
         Self {
-            init_alpha: alpha,
-            init_beta: beta,
+            alpha_0: alpha,
+            beta_0: beta,
             alpha,
             beta,
         }
@@ -34,8 +34,8 @@ impl Arm<f64> for Bernoulli {
     }
 
     fn reset(&mut self) {
-        self.alpha = self.init_alpha;
-        self.beta = self.init_beta;
+        self.alpha = self.alpha_0;
+        self.beta = self.beta_0;
     }
 
     fn sample<T: Rng + ?Sized>(&self, rng: &mut T) -> f64 {
@@ -56,8 +56,8 @@ impl Arm<f64> for Bernoulli {
 impl Default for Bernoulli {
     fn default() -> Self {
         Self {
-            init_alpha: 1.,
-            init_beta: 1.,
+            alpha_0: 1.,
+            beta_0: 1.,
             alpha: 1.,
             beta: 1.,
         }
