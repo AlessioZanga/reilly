@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter};
 
 use rand::{prelude::IteratorRandom, Rng};
 use serde::{Deserialize, Serialize};
@@ -17,6 +17,12 @@ impl Random {
     /// Constructs a random policy.
     pub fn new() -> Self {
         Self {}
+    }
+}
+
+impl Display for Random {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Random")
     }
 }
 

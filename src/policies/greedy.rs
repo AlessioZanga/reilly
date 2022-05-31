@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
@@ -15,6 +17,12 @@ impl Greedy {
     /// Constructs a greedy policy.
     pub fn new() -> Self {
         Self {}
+    }
+}
+
+impl Display for Greedy {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Greedy")
     }
 }
 

@@ -1,11 +1,11 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use rand::Rng;
 
 use crate::types::{Action, Reward, State};
 
 /// Definition of an environment.
-pub trait Env<A, R, S>: Clone + Debug
+pub trait Env<A, R, S>: Clone + Debug + Display
 where
     A: Action,
     R: Reward,

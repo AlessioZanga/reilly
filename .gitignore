@@ -1,4 +1,4 @@
 /target
-/tests/out.csv
+/tests/out*
 /Cargo.lock
 /lcov.info

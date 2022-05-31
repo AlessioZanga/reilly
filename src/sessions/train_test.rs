@@ -117,9 +117,15 @@ impl Session for TrainTest {
         progress.finish();
 
         // Cast data to polars DataFrame.
-        let rewd = ChunkedArray::<Float64Type>::from_vec("reward", rewd).into_series();
-        let test = ChunkedArray::<UInt64Type>::from_vec("test", test).into_series();
-        let reps = ChunkedArray::<UInt64Type>::from_vec("reps", reps).into_series();
-        DataFrame::new(vec![reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
+        let reps = Series::from_vec("rep", reps);
+        let test = Series::from_vec("test", test);
+        let rewd = Series::from_vec("reward", rewd);
+        // Set agent and environment names.
+        let mut agns = Series::from_iter(std::iter::repeat(agent.to_string()).take(capacity));
+        agns.rename("agent");
+        let mut envs = Series::from_iter(std::iter::repeat(environment.to_string()).take(capacity));
+        envs.rename("environment");
+
+        DataFrame::new(vec![envs, agns, reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
     }
 }

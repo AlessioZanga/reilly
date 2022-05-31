@@ -1,4 +1,8 @@
-use std::{collections::HashMap, marker::PhantomData};
+use std::{
+    collections::HashMap,
+    fmt::{Display, Formatter},
+    marker::PhantomData,
+};
 
 use rand::Rng;
 use serde::{Deserialize, Serialize};
@@ -17,16 +21,16 @@ pub struct ArmsAlgorithm {}
 impl ArmsAlgorithm {
     /// Choose an arm w.r.t. the maximum expected value.
     pub const EXPECTED_VALUE: usize = 0;
+    /// Choose an arm w.r.t. the maximum sampled value.
+    pub const THOMPSON_SAMPLING: usize = 1;
     /// Choose an arm w.r.t. the maximum expected value plus the upper confidence bound (UCB1[^1]).
     ///
     /// [^1]: [Auer, P., Cesa-Bianchi, N., & Fischer, P. (2002). Finite-time analysis of the multiarmed bandit problem.](https://scholar.google.com/scholar?q=Finite-time+Analysis+of+the+Multiarmed+Bandit+Problem)
-    pub const UCB_1: usize = 1;
+    pub const UCB_1: usize = 2;
     /// Choose an arm w.r.t. the maximum expected value plus the upper confidence bound (UCB1-Normal[^1]).
     ///
     /// [^1]: [Auer, P., Cesa-Bianchi, N., & Fischer, P. (2002). Finite-time analysis of the multiarmed bandit problem.](https://scholar.google.com/scholar?q=Finite-time+Analysis+of+the+Multiarmed+Bandit+Problem)
-    pub const UCB_1_NORMAL: usize = 2;
-    /// Choose an arm w.r.t. the maximum sampled value.
-    pub const THOMPSON_SAMPLING: usize = 3;
+    pub const UCB_1_NORMAL: usize = 3;
 }
 
 /// Action value function of a MAB.
@@ -75,6 +79,28 @@ where
             arms,
             count: 0,
         }
+    }
+}
+
+impl<A, R, V, const M: usize> Display for Arms<A, R, V, M>
+where
+    A: Action,
+    R: Reward,
+    V: Arm<R>,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        // TODO: Explicit arm type and parameters.
+        write!(
+            f,
+            "{}",
+            match M {
+                ArmsAlgorithm::EXPECTED_VALUE => "ExpectedValue",
+                ArmsAlgorithm::THOMPSON_SAMPLING => "ThompsonSampling",
+                ArmsAlgorithm::UCB_1 => "UCB1",
+                ArmsAlgorithm::UCB_1_NORMAL => "UCB1Normal",
+                _ => unreachable!(),
+            }
+        )
     }
 }
 
@@ -156,12 +182,12 @@ where
 
 /// Arms alias following the expected value algorithm.
 pub type ExpectedValueArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::EXPECTED_VALUE }>;
+/// Arms alias following the Thompson sampling algorithm.
+pub type ThompsonSamplingArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::THOMPSON_SAMPLING }>;
 /// Arms alias following the UCB1 algorithm.
 pub type UCB1Arms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1 }>;
 /// Arms alias following the UCB-Normal algorithm.
 pub type UCB1NormalArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1_NORMAL }>;
-/// Arms alias following the Thompson sampling algorithm.
-pub type ThompsonSamplingArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::THOMPSON_SAMPLING }>;
 
 /// (Contextual) multi armed bandit agent (MAB).
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -181,6 +207,19 @@ where
     _s: PhantomData<S>,
     pi: P,
     v: V,
+}
+
+impl<A, R, S, P, V> Display for MultiArmedBandit<A, R, S, P, V>
+where
+    A: Action,
+    R: Reward,
+    S: State,
+    P: Policy,
+    V: StateActionValue<A, R, S>,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}-MAB", self.pi, self.v)
+    }
 }
 
 impl<A, R, S, P, V> Agent<A, R, S, P, V> for MultiArmedBandit<A, R, S, P, V>

@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use rand::Rng;
 
@@ -9,7 +9,7 @@ use crate::{
 };
 
 /// Definition of a generic agent.
-pub trait Agent<A, R, S, P, V>: Clone + Debug
+pub trait Agent<A, R, S, P, V>: Clone + Debug + Display
 where
     A: Action,
     R: Reward,
