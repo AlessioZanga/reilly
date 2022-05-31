@@ -13,7 +13,12 @@ use crate::{
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Random {}
 
-impl Random {}
+impl Random {
+    /// Constructs a random policy.
+    pub fn new() -> Self {
+        Self {}
+    }
+}
 
 impl Policy for Random {
     fn call<A, R, S, V, T>(&self, f: &V, _state: &S, rng: &mut T) -> A
@@ -32,4 +37,12 @@ impl Policy for Random {
     }
 
     fn reset(&mut self) {}
+
+    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, _is_done: bool)
+    where
+        A: Action,
+        R: Reward,
+        S: State,
+    {
+    }
 }

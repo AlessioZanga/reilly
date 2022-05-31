@@ -47,7 +47,7 @@ mod values {
             let arms = (0..5).map(|a| (a, Bernoulli::default()));
             let mut arms = Arms::from_actions_arms_iter(arms);
 
-            arms.update(&0, &0., &());
+            arms.update(&0, &0., &(), true);
         }
 
         #[test]

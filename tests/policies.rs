@@ -1,71 +1,5 @@
 mod policies {
 
-    mod epsilon_greedy {
-        use rand::SeedableRng;
-        use rand_xoshiro::Xoshiro256PlusPlus;
-        use reilly::{
-            agents::bandits::{arms::Bernoulli, Arms},
-            policies::{EpsilonGreedy, Policy},
-        };
-
-        #[test]
-        fn call() {
-            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
-
-            let data = [
-                (vec![(0, (1., 1.))], 0),
-                (vec![(0, (2., 1.)), (1, (1., 1.))], 0),
-                (vec![(0, (1., 1.)), (1, (2., 1.))], 1),
-                (vec![(0, (2., 1.)), (1, (4., 2.)), (2, (3., 1.))], 2),
-                (vec![(0, (3., 1.)), (1, (1., 1.)), (2, (2., 1.))], 0),
-                (vec![(0, (1., 1.)), (1, (3., 1.)), (2, (2., 1.))], 1),
-                (vec![(0, (1., 1.)), (1, (2., 1.)), (2, (3., 1.))], 2),
-            ];
-
-            for (i, _) in data {
-                let pi: EpsilonGreedy = Default::default();
-                let v = Arms::from_actions_arms_iter(
-                    i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
-                );
-
-                pi.call(&v, &(), &mut rng);
-            }
-        }
-
-        #[test]
-        #[should_panic]
-        fn call_should_panic() {
-            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
-
-            let pi = EpsilonGreedy::new(0.10);
-            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
-
-            pi.call(&v, &(), &mut rng);
-        }
-
-        #[test]
-        fn reset() {
-            let mut pi = EpsilonGreedy::new(0.10);
-
-            pi.reset();
-        }
-
-        #[test]
-        fn serialize() {
-            let pi = EpsilonGreedy::new(0.10);
-
-            serde_json::to_string(&pi).unwrap();
-        }
-
-        #[test]
-        fn deserialize() {
-            let pi = EpsilonGreedy::new(0.10);
-
-            let json = serde_json::to_string(&pi).unwrap();
-            let _: EpsilonGreedy = serde_json::from_str(&json).unwrap();
-        }
-    }
-
     mod greedy {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
@@ -118,6 +52,13 @@ mod policies {
         }
 
         #[test]
+        fn update() {
+            let mut pi = Greedy::new();
+
+            pi.update(&0, &0., &(), true);
+        }
+
+        #[test]
         fn serialize() {
             let pi: Greedy = Default::default();
 
@@ -130,6 +71,138 @@ mod policies {
 
             let json = serde_json::to_string(&pi).unwrap();
             let _: Greedy = serde_json::from_str(&json).unwrap();
+        }
+    }
+
+    mod epsilon_greedy {
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::{
+            agents::bandits::{arms::Bernoulli, Arms},
+            policies::{EpsilonGreedy, Policy},
+        };
+
+        #[test]
+        fn call() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+            let data = [
+                (vec![(0, (1., 1.))], 0),
+                (vec![(0, (2., 1.)), (1, (1., 1.))], 0),
+                (vec![(0, (1., 1.)), (1, (2., 1.))], 1),
+                (vec![(0, (2., 1.)), (1, (4., 2.)), (2, (3., 1.))], 2),
+                (vec![(0, (3., 1.)), (1, (1., 1.)), (2, (2., 1.))], 0),
+                (vec![(0, (1., 1.)), (1, (3., 1.)), (2, (2., 1.))], 1),
+                (vec![(0, (1., 1.)), (1, (2., 1.)), (2, (3., 1.))], 2),
+            ];
+
+            for (i, _) in data {
+                let pi: EpsilonGreedy = Default::default();
+                let v = Arms::from_actions_arms_iter(
+                    i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
+                );
+
+                pi.call(&v, &(), &mut rng);
+            }
+        }
+
+        #[test]
+        #[should_panic]
+        fn call_should_panic() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+            let pi = EpsilonGreedy::new(0.10);
+            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+
+            pi.call(&v, &(), &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let mut pi = EpsilonGreedy::new(0.10);
+
+            pi.reset();
+        }
+
+        #[test]
+        fn update() {
+            let mut pi = EpsilonGreedy::new(0.10);
+
+            pi.update(&0, &0., &(), true);
+        }
+
+        #[test]
+        fn serialize() {
+            let pi = EpsilonGreedy::new(0.10);
+
+            serde_json::to_string(&pi).unwrap();
+        }
+
+        #[test]
+        fn deserialize() {
+            let pi = EpsilonGreedy::new(0.10);
+
+            let json = serde_json::to_string(&pi).unwrap();
+            let _: EpsilonGreedy = serde_json::from_str(&json).unwrap();
+        }
+    }
+
+    mod epsilon_decay_greedy {
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::{
+            agents::bandits::{arms::Bernoulli, Arms},
+            policies::{EpsilonDecayGreedy, Policy},
+        };
+
+        #[test]
+        fn call() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+            let pi: EpsilonDecayGreedy = Default::default();
+            let v = Arms::from_actions_arms_iter([(0, Bernoulli::new(1., 1.))].into_iter());
+
+            pi.call(&v, &(), &mut rng);
+        }
+
+        #[test]
+        #[should_panic]
+        fn call_should_panic() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
+            let pi: EpsilonDecayGreedy = Default::default();
+            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+
+            pi.call(&v, &(), &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let mut pi: EpsilonDecayGreedy = Default::default();
+
+            pi.reset();
+        }
+
+        #[test]
+        fn update() {
+            let mut pi: EpsilonDecayGreedy = Default::default();
+
+            pi.update(&0, &0., &(), true);
+        }
+
+        #[test]
+        fn serialize() {
+            let pi: EpsilonDecayGreedy = Default::default();
+
+            serde_json::to_string(&pi).unwrap();
+        }
+
+        #[test]
+        fn deserialize() {
+            let pi: EpsilonDecayGreedy = Default::default();
+
+            let json = serde_json::to_string(&pi).unwrap();
+            let _: EpsilonDecayGreedy = serde_json::from_str(&json).unwrap();
         }
     }
 
@@ -147,10 +220,8 @@ mod policies {
 
         #[test]
         fn call() {
-            // Initialize the random number generator.
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
-            // [(a, (alpha, beta))]
             let data = [
                 vec![(0, (1., 1.))],
                 vec![(0, (2., 1.)), (1, (1., 1.))],
@@ -203,6 +274,13 @@ mod policies {
             let mut pi: Random = Default::default();
 
             pi.reset();
+        }
+
+        #[test]
+        fn update() {
+            let mut pi = Random::new();
+
+            pi.update(&0, &0., &(), true);
         }
 
         #[test]

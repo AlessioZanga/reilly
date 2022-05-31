@@ -77,7 +77,7 @@ where
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R) {
+    fn update(&mut self, action: &A, reward: &R, _is_done: bool) {
         // Update the arm association with performed action given the obtained reward.
         self.arms
             .get_mut(action)
@@ -145,14 +145,18 @@ where
     }
 
     fn reset(&mut self) -> &mut Self {
+        // Reset the policy.
         self.pi.reset();
+        // Reset the (state-)action value function.
         self.v.reset();
 
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R, state: &S, _is_done: bool) {
+    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool) {
+        // Update the policy.
+        self.pi.update(action, reward, state, is_done);
         // Update the (state-)action value function.
-        self.v.update(action, reward, state)
+        self.v.update(action, reward, state, is_done);
     }
 }
