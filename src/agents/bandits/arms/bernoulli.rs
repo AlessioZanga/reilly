@@ -8,6 +8,7 @@ use super::Arm;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Bernoulli {
     count: usize,
+    srewd: f64,
     alpha_0: f64,
     beta_0: f64,
     alpha: f64,
@@ -21,6 +22,7 @@ impl Bernoulli {
 
         Self {
             count: 0,
+            srewd: 0.,
             alpha_0: alpha,
             beta_0: beta,
             alpha,
@@ -33,6 +35,7 @@ impl Default for Bernoulli {
     fn default() -> Self {
         Self {
             count: 0,
+            srewd: 0.,
             alpha_0: 1.,
             beta_0: 1.,
             alpha: 1.,
@@ -46,6 +49,10 @@ impl Arm<f64> for Bernoulli {
         self.count
     }
 
+    fn get_sum_squared_rewards(&self) -> f64 {
+        self.srewd
+    }
+
     fn call(&self) -> f64 {
         // Compute the expected reward.
         self.alpha / (self.alpha + self.beta)
@@ -53,6 +60,7 @@ impl Arm<f64> for Bernoulli {
 
     fn reset(&mut self) {
         self.count = 0;
+        self.srewd = 0.;
         self.alpha = self.alpha_0;
         self.beta = self.beta_0;
     }
@@ -66,8 +74,9 @@ impl Arm<f64> for Bernoulli {
 
     #[allow(unused_parens)]
     fn update(&mut self, reward: &f64) {
-        // Update the counter.
+        // Update the counter and sum of squared rewards.
         self.count += 1;
+        self.srewd += f64::powi(*reward, 2);
         // Update distributions parameter.
         self.alpha += reward;
         self.beta += (1. - reward);
