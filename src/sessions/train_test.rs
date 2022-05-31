@@ -105,7 +105,7 @@ impl Session for TrainTest {
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(&action, rng);
                     // ... update the cumulative reward.
-                    cum_reward += reward.as_();
+                    cum_reward += reward.to_f64().unwrap();
                 }
                 // Record the cumulative reward.
                 rewd.push(cum_reward);

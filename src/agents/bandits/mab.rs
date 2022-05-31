@@ -34,6 +34,7 @@ where
     #[serde(default, skip_serializing)]
     _r: PhantomData<R>,
     arms: HashMap<A, V>,
+    count: usize,
 }
 
 impl<A, R, V, const M: usize> Arms<A, R, V, M>
@@ -49,7 +50,11 @@ where
     {
         let arms = actions_iter.map(|a| (a, Default::default())).collect();
 
-        Self { _r: PhantomData, arms }
+        Self {
+            _r: PhantomData,
+            arms,
+            count: 0,
+        }
     }
 
     /// Constructs a sequence of arms given the (action, arm) pairs.
@@ -59,7 +64,11 @@ where
     {
         let arms = actions_arms_iter.collect();
 
-        Self { _r: PhantomData, arms }
+        Self {
+            _r: PhantomData,
+            arms,
+            count: 0,
+        }
     }
 }
 
@@ -77,18 +86,33 @@ where
     where
         T: Rng + ?Sized,
     {
+        // Get the arm given action.
+        let a = &self.arms[action];
+        // Execute the specified algorithm.
         match M {
             // Compute the expected value.
-            ArmsAlgorithm::EXPECTED_VALUE => self.arms[action].call(),
+            ArmsAlgorithm::EXPECTED_VALUE => a.call(),
             // Sample from the distribution.
-            ArmsAlgorithm::THOMPSON_SAMPLING => self.arms[action].sample(rng),
+            ArmsAlgorithm::THOMPSON_SAMPLING => a.sample(rng),
+            // Compute the expected value plus the upper confidence bound
+            // computed following UCB1: Q(a) + sqrt(2 * ln(t) / n).
+            ArmsAlgorithm::UCB1 => {
+                // Cast t and n.
+                let t = R::from(self.count).unwrap();
+                let n = R::from(a.get_count()).unwrap();
+
+                a.call() + R::sqrt(R::from(2.).unwrap() * R::ln(t) / n)
+            }
             // Invalid algorithm enumerator.
             _ => unreachable!(),
         }
     }
 
     fn reset(&mut self) -> &mut Self {
+        // Reset each arm.
         self.arms.iter_mut().for_each(|(_, arm)| arm.reset());
+        // Reset the counter.
+        self.count = 0;
 
         self
     }
@@ -98,7 +122,9 @@ where
         self.arms
             .get_mut(action)
             .expect("Unable to get bandit's arm for given action")
-            .update(reward)
+            .update(reward);
+        // Increase the counter.
+        self.count += 1;
     }
 }
 

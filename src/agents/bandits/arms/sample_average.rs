@@ -18,6 +18,10 @@ impl SampleAverage {
 }
 
 impl Arm<f64> for SampleAverage {
+    fn get_count(&self) -> usize {
+        self.count
+    }
+
     fn call(&self) -> f64 {
         self.mean
     }

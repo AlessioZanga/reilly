@@ -7,6 +7,7 @@ use super::Arm;
 /// Bernoulli bandit arm.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Bernoulli {
+    count: usize,
     alpha_0: f64,
     beta_0: f64,
     alpha: f64,
@@ -19,6 +20,7 @@ impl Bernoulli {
         // FIXME: Sanitize inputs.
 
         Self {
+            count: 0,
             alpha_0: alpha,
             beta_0: beta,
             alpha,
@@ -27,13 +29,30 @@ impl Bernoulli {
     }
 }
 
+impl Default for Bernoulli {
+    fn default() -> Self {
+        Self {
+            count: 0,
+            alpha_0: 1.,
+            beta_0: 1.,
+            alpha: 1.,
+            beta: 1.,
+        }
+    }
+}
+
 impl Arm<f64> for Bernoulli {
+    fn get_count(&self) -> usize {
+        self.count
+    }
+
     fn call(&self) -> f64 {
         // Compute the expected reward.
         self.alpha / (self.alpha + self.beta)
     }
 
     fn reset(&mut self) {
+        self.count = 0;
         self.alpha = self.alpha_0;
         self.beta = self.beta_0;
     }
@@ -47,19 +66,10 @@ impl Arm<f64> for Bernoulli {
 
     #[allow(unused_parens)]
     fn update(&mut self, reward: &f64) {
+        // Update the counter.
+        self.count += 1;
         // Update distributions parameter.
         self.alpha += reward;
         self.beta += (1. - reward);
-    }
-}
-
-impl Default for Bernoulli {
-    fn default() -> Self {
-        Self {
-            alpha_0: 1.,
-            beta_0: 1.,
-            alpha: 1.,
-            beta: 1.,
-        }
     }
 }
