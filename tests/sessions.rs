@@ -8,7 +8,7 @@ mod sessions {
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
             agents::{
-                bandits::{arms::SampleAverage, Arms, MultiArmedBandit},
+                bandits::{arms::SampleAverage, ExpectedValueArms, MultiArmedBandit},
                 Agent,
             },
             envs::{Env, FarWest},
@@ -37,7 +37,7 @@ mod sessions {
                 // Initialize an epsilon-greedy policy.
                 EpsilonDecayGreedy::default(),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
             // Execute the experiment session.
             let session = TrainTest::new(10, 3, 500);

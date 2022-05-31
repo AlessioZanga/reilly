@@ -6,7 +6,7 @@ mod agents {
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
             agents::{
-                bandits::{arms::Bernoulli, Arms, MultiArmedBandit},
+                bandits::{arms::Bernoulli, ExpectedValueArms, MultiArmedBandit},
                 Agent,
             },
             policies::EpsilonGreedy,
@@ -21,7 +21,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
         }
 
@@ -34,7 +34,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             assert_eq!(
@@ -52,7 +52,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             assert!(mab.states_iter().eq([&()].into_iter()));
@@ -67,7 +67,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
@@ -85,7 +85,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             mab.reset();
@@ -100,7 +100,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             mab.update(&actions[0], &0., &(), false);
@@ -115,7 +115,7 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             serde_json::to_string(&mab).unwrap();
@@ -130,11 +130,11 @@ mod agents {
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
             let json = serde_json::to_string(&mab).unwrap();
-            let _: MultiArmedBandit<i32, f64, (), EpsilonGreedy, Arms<i32, f64, Bernoulli>> =
+            let _: MultiArmedBandit<i32, f64, (), EpsilonGreedy, ExpectedValueArms<i32, f64, Bernoulli>> =
                 serde_json::from_str(&json).unwrap();
         }
     }

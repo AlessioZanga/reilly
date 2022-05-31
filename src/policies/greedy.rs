@@ -19,7 +19,7 @@ impl Greedy {
 }
 
 impl Policy for Greedy {
-    fn call<A, R, S, V, T>(&self, f: &V, state: &S, _rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -30,7 +30,7 @@ impl Policy for Greedy {
         // For each action ...
         f.actions_iter()
             // ... evaluate the value function, then ...
-            .map(|a| (a, f.call(a, state)))
+            .map(|a| (a, f.call(a, state, rng)))
             // ... for each (action, reward) pair ...
             .reduce(|(a_i, r_i), (a_j, r_j)|
             // ... maximize the expected reward ...
