@@ -4,7 +4,7 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::{arms::Bernoulli, Arms},
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{Greedy, Policy},
         };
 
@@ -25,7 +25,7 @@ mod policies {
 
             for (i, j) in data {
                 let pi: Greedy = Default::default();
-                let v = Arms::from_actions_arms_iter(
+                let v = ExpectedValueArms::from_actions_arms_iter(
                     i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
                 );
 
@@ -39,7 +39,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: Greedy = Default::default();
-            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -78,7 +78,7 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::{arms::Bernoulli, Arms},
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{EpsilonGreedy, Policy},
         };
 
@@ -98,7 +98,7 @@ mod policies {
 
             for (i, _) in data {
                 let pi: EpsilonGreedy = Default::default();
-                let v = Arms::from_actions_arms_iter(
+                let v = ExpectedValueArms::from_actions_arms_iter(
                     i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
                 );
 
@@ -112,7 +112,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi = EpsilonGreedy::new(0.10);
-            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -151,7 +151,7 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::{arms::Bernoulli, Arms},
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{EpsilonDecayGreedy, Policy},
         };
 
@@ -160,7 +160,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: EpsilonDecayGreedy = Default::default();
-            let v = Arms::from_actions_arms_iter([(0, Bernoulli::new(1., 1.))].into_iter());
+            let v = ExpectedValueArms::from_actions_arms_iter([(0, Bernoulli::new(1., 1.))].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -171,7 +171,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: EpsilonDecayGreedy = Default::default();
-            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -213,7 +213,7 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::{arms::Bernoulli, Arms},
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{Policy, Random},
             values::StateActionValue,
         };
@@ -234,7 +234,7 @@ mod policies {
 
             for i in data {
                 let pi: Random = Default::default();
-                let v = Arms::from_actions_arms_iter(
+                let v = ExpectedValueArms::from_actions_arms_iter(
                     i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
                 );
 
@@ -264,7 +264,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: Random = Default::default();
-            let v = Arms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }

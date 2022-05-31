@@ -11,20 +11,39 @@ use crate::{
     values::{ActionValue, StateActionValue},
 };
 
+/// Arms algortithm pseudo-enumerator.
+pub struct ArmsAlgorithm {}
+
+impl ArmsAlgorithm {
+    /// Choose an arm w.r.t. the maximum expected value.
+    pub const EXPECTED_VALUE: usize = 0;
+    /// Choose an arm w.r.t. the maximum expected value plus the upper confidence bound (UCB1[^1]).
+    ///
+    /// [^1]: [Auer, P., Cesa-Bianchi, N., & Fischer, P. (2002). Finite-time analysis of the multiarmed bandit problem.](https://scholar.google.com/scholar?q=Finite-time+Analysis+of+the+Multiarmed+Bandit+Problem)
+    pub const UCB_1: usize = 1;
+    /// Choose an arm w.r.t. the maximum expected value plus the upper confidence bound (UCB1-Normal[^1]).
+    ///
+    /// [^1]: [Auer, P., Cesa-Bianchi, N., & Fischer, P. (2002). Finite-time analysis of the multiarmed bandit problem.](https://scholar.google.com/scholar?q=Finite-time+Analysis+of+the+Multiarmed+Bandit+Problem)
+    pub const UCB_1_NORMAL: usize = 2;
+    /// Choose an arm w.r.t. the maximum sampled value.
+    pub const THOMPSON_SAMPLING: usize = 3;
+}
+
 /// Action value function of a MAB.
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Arms<A, R, V>
+pub struct Arms<A, R, V, const M: usize>
 where
     A: Action,
     R: Reward,
     V: Arm<R>,
 {
     #[serde(default, skip_serializing)]
-    _r_marker: PhantomData<R>,
+    _r: PhantomData<R>,
     arms: HashMap<A, V>,
+    count: usize,
 }
 
-impl<A, R, V> Arms<A, R, V>
+impl<A, R, V, const M: usize> Arms<A, R, V, M>
 where
     A: Action,
     R: Reward,
@@ -38,8 +57,9 @@ where
         let arms = actions_iter.map(|a| (a, Default::default())).collect();
 
         Self {
-            _r_marker: PhantomData,
+            _r: PhantomData,
             arms,
+            count: 0,
         }
     }
 
@@ -51,13 +71,14 @@ where
         let arms = actions_arms_iter.collect();
 
         Self {
-            _r_marker: PhantomData,
+            _r: PhantomData,
             arms,
+            count: 0,
         }
     }
 }
 
-impl<A, R, V> ActionValue<A, R> for Arms<A, R, V>
+impl<A, R, V, const M: usize> ActionValue<A, R> for Arms<A, R, V, M>
 where
     A: Action,
     R: Reward,
@@ -67,12 +88,57 @@ where
         Box::new(self.arms.keys())
     }
 
-    fn call(&self, action: &A) -> R {
-        self.arms[action].call()
+    fn call<T>(&self, action: &A, rng: &mut T) -> R
+    where
+        T: Rng + ?Sized,
+    {
+        // Get the arm given action.
+        let a = &self.arms[action];
+        // Execute the specified algorithm.
+        match M {
+            // Compute the expected value.
+            ArmsAlgorithm::EXPECTED_VALUE => a.call(),
+            // Sample from the distribution.
+            ArmsAlgorithm::THOMPSON_SAMPLING => a.sample(rng),
+            // Compute the expected value plus the upper confidence bound
+            // following the UCB1: Q(a) + sqrt(2 * ln(t) / n).
+            ArmsAlgorithm::UCB_1 => {
+                // Cast t and n.
+                let t = R::from(self.count).unwrap();
+                let n = R::from(a.get_count()).unwrap();
+
+                a.call() + R::sqrt(R::from(2.).unwrap() * R::ln(t) / n)
+            }
+            // Compute the expected value plus the upper confidence bound
+            // following the UCB1-Normal: Q(a) + sqrt(16 * [(q - n * Q(a)^2) / (n - 1)] * [ln(t - 1) / n]).
+            ArmsAlgorithm::UCB_1_NORMAL => {
+                // Cast t and n.
+                let t = R::from(self.count).unwrap();
+                let n = R::from(a.get_count()).unwrap();
+
+                // Compute Q(a) and Q(n).
+                let q_a = a.call();
+                let q_n = a.get_sum_squared_rewards();
+
+                q_a + R::sqrt(
+                    // Constant.
+                    R::from(16.).unwrap() *
+                    // First term.
+                    ((q_n - n * R::powi(q_a, 2)) / (n - R::one())) *
+                    // Second term.
+                    R::ln(t - R::one()),
+                )
+            }
+            // Invalid algorithm enumerator.
+            _ => unreachable!(),
+        }
     }
 
     fn reset(&mut self) -> &mut Self {
+        // Reset each arm.
         self.arms.iter_mut().for_each(|(_, arm)| arm.reset());
+        // Reset the counter.
+        self.count = 0;
 
         self
     }
@@ -82,9 +148,20 @@ where
         self.arms
             .get_mut(action)
             .expect("Unable to get bandit's arm for given action")
-            .update(reward)
+            .update(reward);
+        // Increase the counter.
+        self.count += 1;
     }
 }
+
+/// Arms alias following the expected value algorithm.
+pub type ExpectedValueArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::EXPECTED_VALUE }>;
+/// Arms alias following the UCB1 algorithm.
+pub type UCB1Arms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1 }>;
+/// Arms alias following the UCB-Normal algorithm.
+pub type UCB1NormalArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1_NORMAL }>;
+/// Arms alias following the Thompson sampling algorithm.
+pub type ThompsonSamplingArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::THOMPSON_SAMPLING }>;
 
 /// (Contextual) multi armed bandit agent (MAB).
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -97,11 +174,11 @@ where
     V: StateActionValue<A, R, S>,
 {
     #[serde(default, skip_serializing)]
-    _a_marker: PhantomData<A>,
+    _a: PhantomData<A>,
     #[serde(default, skip_serializing)]
-    _r_marker: PhantomData<R>,
+    _r: PhantomData<R>,
     #[serde(default, skip_serializing)]
-    _s_marker: PhantomData<S>,
+    _s: PhantomData<S>,
     pi: P,
     v: V,
 }
@@ -120,9 +197,9 @@ where
         V: StateActionValue<A, R, S>,
     {
         Self {
-            _a_marker: PhantomData,
-            _r_marker: PhantomData,
-            _s_marker: PhantomData,
+            _a: PhantomData,
+            _r: PhantomData,
+            _s: PhantomData,
             pi,
             v,
         }

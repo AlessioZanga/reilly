@@ -9,6 +9,12 @@ pub trait Arm<R>: Clone + Debug + Default
 where
     R: Reward,
 {
+    /// Gets the number of times the arm has been pulled.
+    fn get_count(&self) -> usize;
+
+    /// Gets the sum of the squared rewards obtained so far.
+    fn get_sum_squared_rewards(&self) -> R;
+
     /// Gets expected reward.
     fn call(&self) -> R;
 

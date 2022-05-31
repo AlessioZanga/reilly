@@ -8,7 +8,7 @@ mod sessions {
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
             agents::{
-                bandits::{arms::Bernoulli, Arms, MultiArmedBandit},
+                bandits::{arms, MultiArmedBandit, UCB1NormalArms},
                 Agent,
             },
             envs::{Env, FarWest},
@@ -32,12 +32,12 @@ mod sessions {
             .map(|d| d.unwrap());
             let mut env = FarWest::new(env, 1_000);
             // Initialize the MAB.
-            let mab = env.actions_iter().map(|&a| (a, Bernoulli::default()));
+            let mab = env.actions_iter().map(|&a| (a, arms::Normal::default()));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonDecayGreedy::default(),
                 // Construct a action value function.
-                Arms::from_actions_arms_iter(mab),
+                UCB1NormalArms::from_actions_arms_iter(mab),
             );
             // Execute the experiment session.
             let session = TrainTest::new(10, 3, 500);

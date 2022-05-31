@@ -1,5 +1,7 @@
 use std::fmt::Debug;
 
+use rand::Rng;
+
 use crate::types::{Action, Reward, State};
 
 /// Definition of the action value function.
@@ -12,7 +14,9 @@ where
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
 
     /// Computes the expected reward of the given action.
-    fn call(&self, action: &A) -> R;
+    fn call<T>(&self, action: &A, rng: &mut T) -> R
+    where
+        T: Rng + ?Sized;
 
     /// Resets the function.
     fn reset(&mut self) -> &mut Self;
@@ -35,7 +39,9 @@ where
     fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a>;
 
     /// Computes the expected reward of the given action-state pair.
-    fn call(&self, action: &A, state: &S) -> R;
+    fn call<T>(&self, action: &A, state: &S, rng: &mut T) -> R
+    where
+        T: Rng + ?Sized;
 
     /// Resets the function.
     fn reset(&mut self) -> &mut Self;
@@ -61,8 +67,11 @@ where
         Box::new([()].iter())
     }
 
-    fn call(&self, action: &A, _state: &()) -> R {
-        self.call(action)
+    fn call<T>(&self, action: &A, _state: &(), rng: &mut T) -> R
+    where
+        T: Rng + ?Sized,
+    {
+        self.call(action, rng)
     }
 
     fn reset(&mut self) -> &mut Self {
