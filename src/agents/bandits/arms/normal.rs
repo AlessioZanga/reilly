@@ -1,17 +1,17 @@
-use rand_distr::{Distribution, Normal};
+use rand_distr::Distribution;
 use serde::{Deserialize, Serialize};
 
 use super::Arm;
 
 /// Sample average bandit arm.
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct SampleAverage {
+pub struct Normal {
     count: usize,
     srewd: f64,
     mean: f64,
 }
 
-impl SampleAverage {
+impl Normal {
     /// Constructs a new sample-average bandit arm.
     pub fn new() -> Self {
         Self {
@@ -22,7 +22,7 @@ impl SampleAverage {
     }
 }
 
-impl Arm<f64> for SampleAverage {
+impl Arm<f64> for Normal {
     fn get_count(&self) -> usize {
         self.count
     }
@@ -41,7 +41,7 @@ impl Arm<f64> for SampleAverage {
     }
 
     fn sample<T: rand::Rng + ?Sized>(&self, rng: &mut T) -> f64 {
-        Normal::new(self.mean, 1.)
+        rand_distr::Normal::new(self.mean, 1. / (self.count as f64 + 1.))
             .expect("Unable to construct sampling distribution")
             .sample(rng)
     }
