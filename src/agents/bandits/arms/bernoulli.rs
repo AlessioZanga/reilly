@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use super::Arm;
 
 /// Bernoulli bandit arm.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Bernoulli {
     alpha_0: f64,
     beta_0: f64,

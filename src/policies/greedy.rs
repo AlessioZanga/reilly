@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// Greedy policy.
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Greedy {}
 
 impl Greedy {
