@@ -1,11 +1,11 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use rand::Rng;
 
 use crate::types::{Action, Reward, State};
 
 /// Definition of the action value function.
-pub trait ActionValue<A, R>: Clone + Debug
+pub trait ActionValue<A, R>: Clone + Debug + Display
 where
     A: Action,
     R: Reward,
@@ -26,7 +26,7 @@ where
 }
 
 /// Definition of the state-action value function.
-pub trait StateActionValue<A, R, S>: Clone + Debug
+pub trait StateActionValue<A, R, S>: Clone + Debug + Display
 where
     A: Action,
     R: Reward,

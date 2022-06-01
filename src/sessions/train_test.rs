@@ -31,7 +31,17 @@ impl TrainTest {
 }
 
 impl Session for TrainTest {
-    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
+    fn get_total_episodes(&self) -> usize {
+        self.repeat * self.train
+    }
+
+    fn call_with_bar<A, R, S, P, V, G, E, T>(
+        &self,
+        agent: &mut G,
+        environment: &mut E,
+        rng: &mut T,
+        progress: Option<ProgressBar>,
+    ) -> DataFrame
     where
         A: Action,
         R: Reward,
@@ -59,9 +69,12 @@ impl Session for TrainTest {
         let mut test = Vec::with_capacity(capacity);
         let mut reps = Vec::with_capacity(capacity);
         // Initialize progress bar.
-        let progress = ProgressBar::new((self.repeat * self.train) as u64)
-            // Set progress message.
-            .with_message("Executing train-test");
+        let progress = match progress {
+            None => ProgressBar::new(self.get_total_episodes() as u64),
+            Some(progress) => progress,
+        }
+        // Set progress message.
+        .with_message("Executing train-test");
         // Set progress bar style.
         progress.set_style(ProgressStyle::default_bar().template(
             "{spinner} {msg}... ({percent}%) {wide_bar} [{pos}/{len}][{elapsed_precise}/{eta_precise}][{per_sec}]",
@@ -117,9 +130,15 @@ impl Session for TrainTest {
         progress.finish();
 
         // Cast data to polars DataFrame.
-        let rewd = ChunkedArray::<Float64Type>::from_vec("reward", rewd).into_series();
-        let test = ChunkedArray::<UInt64Type>::from_vec("test", test).into_series();
-        let reps = ChunkedArray::<UInt64Type>::from_vec("reps", reps).into_series();
-        DataFrame::new(vec![reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
+        let reps = Series::from_vec("rep", reps);
+        let test = Series::from_vec("test", test);
+        let rewd = Series::from_vec("reward", rewd);
+        // Set agent and environment names.
+        let mut agns = Series::from_iter(std::iter::repeat(agent.to_string()).take(capacity));
+        agns.rename("agent");
+        let mut envs = Series::from_iter(std::iter::repeat(environment.to_string()).take(capacity));
+        envs.rename("environment");
+
+        DataFrame::new(vec![envs, agns, reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
     }
 }

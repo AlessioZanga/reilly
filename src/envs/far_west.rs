@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter};
 
 use rand::Rng;
 use rand_distr::Distribution;
@@ -37,6 +37,16 @@ where
             count: 0,
             end,
         }
+    }
+}
+
+impl<D> Display for FarWest<D>
+where
+    D: Clone + Debug + Distribution<f64>,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        // TODO: Explicit distributions type and parameters.
+        write!(f, "FarWest")
     }
 }
 

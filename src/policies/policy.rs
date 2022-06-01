@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use rand::Rng;
 
@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// Definition of generic policy.
-pub trait Policy: Clone + Debug + Default {
+pub trait Policy: Clone + Debug + Default + Display {
     /// Chooses the next action given the (state-)value function and the current state.
     fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
     where

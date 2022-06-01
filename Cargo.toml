@@ -13,11 +13,12 @@ keywords = ["ai", "reinforcement", "learning"]
 categories = ["algorithms", "mathematics", "science"]
 
 [dependencies]
-indicatif = "^0.16"
+indicatif = { version = "^0.16", features = ["rayon"] }
 num = "^0.4"
 polars = { version = "^0.21", features = ["dtype-slim"] }
 rand = "^0.8"
 rand_distr = "^0.4"
+rayon = "^1.5"
 serde = { version = "^1.0", features = ["derive"] }
 
 [dev-dependencies]

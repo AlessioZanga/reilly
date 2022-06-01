@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter};
 
 use rand::prelude::*;
 use rand_distr::Uniform;
@@ -37,6 +37,12 @@ impl EpsilonGreedy {
 impl Default for EpsilonGreedy {
     fn default() -> Self {
         Self::new(0.1)
+    }
+}
+
+impl Display for EpsilonGreedy {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "EpsilonGreedy(ϵ = {})", self.epsilon_0)
     }
 }
 

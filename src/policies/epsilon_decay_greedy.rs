@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use rand_distr::{Distribution, Uniform};
 use serde::{Deserialize, Serialize};
 
@@ -48,6 +50,16 @@ impl EpsilonDecayGreedy {
 impl Default for EpsilonDecayGreedy {
     fn default() -> Self {
         Self::new(0.1, 0.999, 0.01)
+    }
+}
+
+impl Display for EpsilonDecayGreedy {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "EpsilonDecayGreedy(δ = {}, ϵ = {}, ϵ_min = {})",
+            self.epsilon_decay, self.epsilon_0, self.epsilon_min
+        )
     }
 }
 
