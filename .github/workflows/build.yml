@@ -1,0 +1,62 @@
+on: [push]
+
+name: build
+
+jobs:
+  build:
+    name: reilly
+    runs-on: '${{ matrix.os }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        env: ["stable", "beta", "nightly"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-dependencies
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('Cargo.toml') }}-${{ hashFiles('.github/workflows/build.yml') }}
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.env }}
+          components: rustfmt, clippy, llvm-tools-preview
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test --tests
+      - name: Doctest
+        if: ${{ runner.os == 'Linux' && matrix.env == 'stable' }}
+        run: cargo test --doc
+      - name: Coverage
+        if: ${{ runner.os == 'Linux' && matrix.env == 'stable' }}
+        run: |
+          cargo install cargo-llvm-cov
+          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+      - name: CodeCov
+        if: ${{ runner.os == 'Linux' && matrix.env == 'stable' }}
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./lcov.info
+          flags: unittests
+          fail_ci_if_error: true
+      - name: Publish
+        if: ${{ runner.os == 'Linux' && matrix.env == 'stable' && github.ref == 'refs/heads/main' }}
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          cargo login "$TOKEN"
+          cargo publish --allow-dirty
+      - name: 'Artifacts'
+        uses: actions/upload-artifact@v2
+        if: ${{ runner.os == 'Linux' && matrix.env == 'stable' && github.ref == 'refs/heads/main' }}
+        with:
+          name: ${{ env.PROJECT_NAME_UNDERSCORE }}
+          path: target/release/${{ env.PROJECT_NAME_UNDERSCORE }}
