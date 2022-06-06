@@ -139,12 +139,12 @@ impl Taxi {
         }
     }
 
-    const fn encode(taxi_row: usize, taxi_col: usize, pass_loc: usize, dest_idx: usize) -> usize {
+    const fn encode(taxi_row: usize, taxi_col: usize, pass_idx: usize, dest_idx: usize) -> usize {
         let mut i = taxi_row;
         i *= Self::ROWS;
         i += taxi_col;
         i *= Self::COLS;
-        i += pass_loc;
+        i += pass_idx;
         i *= Self::LOCS.len();
         i += dest_idx;
 
