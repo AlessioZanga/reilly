@@ -10,7 +10,7 @@ use crate::{
 };
 
 /// Random policy.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Random {}
 
 impl Random {

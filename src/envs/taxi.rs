@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::Env;
 
 /// Port of `Taxi` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/b704d4660e45edc7bb674a6c971d376990d340dc/gym/envs/toy_text/taxi.py).
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Taxi {
     state: usize,
     p_states_0: Array1<f64>,

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use super::Arm;
 
 /// Sample average bandit arm.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Normal {
     count: usize,
     srewd: f64,
