@@ -86,7 +86,7 @@ impl Session for TrainTest {
                 // Declare future reward.
                 let mut reward;
                 // Reset the environment and get its initial state.
-                let mut state = environment.reset().get_state();
+                let mut state = environment.reset(rng).get_state();
                 // Set is_done flag to false.
                 let mut is_done = false;
                 // While the episode is not over ...
@@ -104,7 +104,7 @@ impl Session for TrainTest {
             // ... perform m test episodes.
             for j in 0..self.test {
                 // Reset the environment and get its initial state.
-                let mut state = environment.reset().get_state();
+                let mut state = environment.reset(rng).get_state();
                 // Set is_done flag to false.
                 let mut is_done = false;
                 // Init the cumulative reward.

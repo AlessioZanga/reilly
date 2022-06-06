@@ -79,6 +79,8 @@ mod envs {
 
         #[test]
         fn reset() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+
             let env = [
                 Normal::new(0., 1.),
                 Normal::new(5., 2.),
@@ -90,7 +92,7 @@ mod envs {
             .map(|d| d.unwrap());
             let mut env = FarWest::new(env, 1_000);
 
-            env.reset();
+            env.reset(&mut rng);
         }
 
         #[test]

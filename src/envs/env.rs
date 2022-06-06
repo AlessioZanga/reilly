@@ -27,5 +27,7 @@ where
         T: Rng + ?Sized;
 
     /// Resets the environment state.
-    fn reset(&mut self) -> &mut Self;
+    fn reset<T>(&mut self, rng: &mut T) -> &mut Self
+    where
+        T: rand::Rng + ?Sized;
 }

@@ -76,7 +76,10 @@ where
         (self.distributions[*action].sample(rng), (), is_done)
     }
 
-    fn reset(&mut self) -> &mut Self {
+    fn reset<T>(&mut self, _rng: &mut T) -> &mut Self
+    where
+        T: rand::Rng + ?Sized,
+    {
         // Reset the time step counter.
         self.count = 0;
 
