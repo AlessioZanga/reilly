@@ -136,6 +136,8 @@ mod envs {
     mod taxi {
         use std::collections::BTreeSet;
 
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::envs::{Env, Taxi};
 
         #[test]
@@ -166,27 +168,34 @@ mod envs {
         }
 
         #[test]
-        #[ignore]
         fn call_mut() {
-            todo!()
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = Taxi::new();
+
+            env.call_mut(&0, &mut rng);
         }
 
         #[test]
-        #[ignore]
         fn reset() {
-            todo!()
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = Taxi::new();
+
+            env.reset(&mut rng);
         }
 
         #[test]
-        #[ignore]
         fn serialize() {
-            todo!()
+            let env = Taxi::new();
+
+            serde_json::to_string(&env).unwrap();
         }
 
         #[test]
-        #[ignore]
         fn deserialize() {
-            todo!()
+            let env = Taxi::new();
+
+            let json = serde_json::to_string(&env).unwrap();
+            let _: Taxi = serde_json::from_str(&json).unwrap();
         }
     }
 }
