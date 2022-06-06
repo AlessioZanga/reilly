@@ -22,7 +22,7 @@ mod envs {
 
             assert_eq!(
                 BTreeSet::from_iter(env.actions_iter()),
-                BTreeSet::from_iter(vec![0, 1, 2, 3, 4].iter()),
+                BTreeSet::from_iter(vec![0, 1, 2, 3, 4]),
             );
         }
 
@@ -39,7 +39,7 @@ mod envs {
             .map(|d| d.unwrap());
             let env = FarWest::new(env, 1_000);
 
-            assert!(env.states_iter().eq([&()].into_iter()));
+            assert!(env.states_iter().eq([()].into_iter()));
         }
 
         #[test]

@@ -16,10 +16,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = ExpectedValueArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -27,7 +24,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = ExpectedValueArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -89,10 +86,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = ExpectedValueArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -100,7 +94,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = ExpectedValueArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -164,10 +158,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = ThompsonSamplingArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -175,7 +166,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = ThompsonSamplingArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -237,10 +228,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = ThompsonSamplingArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -248,7 +236,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = ThompsonSamplingArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -312,10 +300,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = UCB1Arms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -323,7 +308,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = UCB1Arms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -385,10 +370,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = UCB1Arms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -396,7 +378,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = UCB1Arms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -460,10 +442,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = UCB1NormalArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -471,7 +450,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::default()));
                     let arms = UCB1NormalArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]
@@ -533,10 +512,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = UCB1NormalArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(
-                        BTreeSet::from_iter(arms.actions_iter().copied()),
-                        BTreeSet::from_iter(0..5)
-                    );
+                    assert_eq!(BTreeSet::from_iter(arms.actions_iter()), BTreeSet::from_iter(0..5));
                 }
 
                 #[test]
@@ -544,7 +520,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::default()));
                     let arms = UCB1NormalArms::from_actions_arms_iter(arms);
 
-                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([&()]));
+                    assert_eq!(BTreeSet::from_iter(arms.states_iter()), BTreeSet::from_iter([()]));
                 }
 
                 #[test]

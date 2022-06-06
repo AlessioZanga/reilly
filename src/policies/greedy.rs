@@ -38,7 +38,7 @@ impl Policy for Greedy {
         // For each action ...
         f.actions_iter()
             // ... evaluate the value function, then ...
-            .map(|a| (a, f.call(a, state, rng)))
+            .map(|a| (a.clone(), f.call(&a, state, rng)))
             // ... for each (action, reward) pair ...
             .reduce(|(a_i, r_i), (a_j, r_j)|
             // ... maximize the expected reward ...
@@ -50,7 +50,6 @@ impl Policy for Greedy {
             .map(|(a, _)| a)
             // ... or panic if sequence is empty.
             .expect("Unable to choose an action")
-            .clone()
     }
 
     fn reset(&mut self) {}

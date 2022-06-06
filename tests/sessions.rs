@@ -33,7 +33,7 @@ mod sessions {
             .map(|d| d.unwrap());
             let mut env = FarWest::new(env, 1_000);
             // Initialize the MAB.
-            let mab = env.actions_iter().map(|&a| (a, arms::Normal::default()));
+            let mab = env.actions_iter().map(|a| (a, arms::Normal::default()));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonDecayGreedy::default(),
@@ -64,7 +64,7 @@ mod sessions {
             .map(|d| d.unwrap());
             let env = FarWest::new(env, 1_000);
             // Initialize the MABs.
-            let mabs: Vec<_> = env.actions_iter().map(|&a| (a, arms::Normal::default())).collect();
+            let mabs: Vec<_> = env.actions_iter().map(|a| (a, arms::Normal::default())).collect();
             let mabs = [0.025, 0.050, 0.075, 0.10, 0.15, 0.20, 0.25].into_iter().map(|e| {
                 MultiArmedBandit::new(
                     // Initialize an epsilon-greedy policy.

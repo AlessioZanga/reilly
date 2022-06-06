@@ -110,8 +110,8 @@ where
     R: Reward,
     V: Arm<R>,
 {
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
-        Box::new(self.arms.keys())
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
+        Box::new(self.arms.keys().cloned())
     }
 
     fn call<T>(&self, action: &A, rng: &mut T) -> R
@@ -244,11 +244,11 @@ where
         }
     }
 
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
         self.v.actions_iter()
     }
 
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a> {
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a> {
         self.v.states_iter()
     }
 

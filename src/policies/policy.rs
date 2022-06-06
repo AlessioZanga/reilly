@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// Definition of generic policy.
-pub trait Policy: Clone + Debug + Default + Display {
+pub trait Policy: Clone + Debug + Display {
     /// Chooses the next action given the (state-)value function and the current state.
     fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
     where

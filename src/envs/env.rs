@@ -12,10 +12,10 @@ where
     S: State,
 {
     /// Iterates of the action space.
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
 
     /// Iterates of the state space.
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a>;
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a>;
 
     /// Gets current state of the environment.
     fn get_state(&self) -> S;

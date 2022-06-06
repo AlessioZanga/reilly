@@ -37,10 +37,7 @@ mod agents {
                 ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
-            assert_eq!(
-                BTreeSet::from_iter(mab.actions_iter()),
-                BTreeSet::from_iter(actions.iter()),
-            );
+            assert_eq!(BTreeSet::from_iter(mab.actions_iter()), BTreeSet::from_iter(actions),);
         }
 
         #[test]
@@ -55,7 +52,7 @@ mod agents {
                 ExpectedValueArms::from_actions_arms_iter(mab),
             );
 
-            assert!(mab.states_iter().eq([&()].into_iter()));
+            assert!(mab.states_iter().eq([()].into_iter()));
         }
 
         #[test]
@@ -73,7 +70,7 @@ mod agents {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
             let action = mab.call(&(), &mut rng);
 
-            assert!(mab.actions_iter().any(|&a| a == action));
+            assert!(mab.actions_iter().any(|a| a == action));
         }
 
         #[test]
