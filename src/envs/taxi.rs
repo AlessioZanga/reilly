@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    fmt::{Display, Formatter},
-};
+use std::fmt::{Display, Formatter};
 
 use ndarray::prelude::*;
 use rand::prelude::*;
@@ -14,8 +11,10 @@ use super::Env;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Taxi {
     state: usize,
-    initial_states_distribution: Array1<f64>,
-    transition_matrix: HashMap<usize, HashMap<usize, Vec<(f64, usize, f64, bool)>>>,
+    p_states_0: Array1<f64>,
+    transition_matrix: Array2<usize>,
+    reward_matrix: Array2<f64>,
+    is_terminal: Array2<bool>,
 }
 
 impl Taxi {
@@ -50,14 +49,14 @@ impl Taxi {
 
     /// Constructs a `Taxi-v3` environment.
     pub fn new() -> Self {
-        let mut initial_states_distribution = ArrayBase::zeros((Self::STATES,));
-        let mut transition_matrix: HashMap<usize, HashMap<usize, Vec<(f64, usize, f64, bool)>>> = Default::default();
-
-        for s in 0..Self::STATES {
-            for a in 0..Self::ACTIONS {
-                transition_matrix.entry(s).or_default().entry(a).or_default();
-            }
-        }
+        // Probability distribution of the initial state.
+        let mut p_states_0 = ArrayBase::zeros((Self::STATES,));
+        // Transition function (state, action) -> next_state.
+        let mut transition_matrix = ArrayBase::zeros((Self::STATES, Self::ACTIONS));
+        // Reward function (state, action) -> reward.
+        let mut reward_matrix = ArrayBase::from_elem((Self::STATES, Self::ACTIONS), -1.);
+        // Check if next state is terminal state.
+        let mut is_terminal = ArrayBase::from_elem((Self::STATES, Self::ACTIONS), false);
 
         for row in 0..Self::ROWS {
             for col in 0..Self::COLS {
@@ -65,7 +64,7 @@ impl Taxi {
                     for dest_idx in 0..Self::LOCS.len() {
                         let state = Self::encode(row, col, pass_idx, dest_idx);
                         if pass_idx < 4 && pass_idx != dest_idx {
-                            initial_states_distribution[state] += 1.;
+                            p_states_0[state] += 1.;
                         }
                         for action in 0..Self::ACTIONS {
                             let (mut new_row, mut new_col, mut new_pass_idx) = (row, col, pass_idx);
@@ -120,24 +119,23 @@ impl Taxi {
                                 _ => unreachable!(),
                             };
                             let new_state = Self::encode(new_row, new_col, new_pass_idx, dest_idx);
-                            transition_matrix
-                                .get_mut(&state)
-                                .unwrap()
-                                .get_mut(&action)
-                                .unwrap()
-                                .push((1.0, new_state, reward, done));
+                            transition_matrix[(state, action)] = new_state;
+                            reward_matrix[(state, action)] = reward;
+                            is_terminal[(state, action)] = done;
                         }
                     }
                 }
             }
         }
 
-        initial_states_distribution /= initial_states_distribution.sum();
+        p_states_0 /= p_states_0.sum();
 
         Self {
             state: 0,
-            initial_states_distribution,
+            p_states_0,
             transition_matrix,
+            reward_matrix,
+            is_terminal,
         }
     }
 
@@ -187,14 +185,16 @@ impl Env<usize, f64, usize> for Taxi {
         self.state
     }
 
-    fn call_mut<T>(&mut self, action: &usize, rng: &mut T) -> (f64, usize, bool)
+    fn call_mut<T>(&mut self, action: &usize, _rng: &mut T) -> (f64, usize, bool)
     where
         T: rand::Rng + ?Sized,
     {
-        let transitions = self.transition_matrix.get(&self.state).unwrap().get(action).unwrap();
-        let weights = transitions.iter().map(|t| t.0);
-        let idxs = WeightedIndex::new(weights).unwrap();
-        let (_, next_state, reward, done) = transitions[idxs.sample(rng)];
+        let idx = (self.state, *action);
+
+        let next_state = self.transition_matrix[idx];
+        let reward = self.reward_matrix[idx];
+        let done = self.is_terminal[idx];
+
         self.state = next_state;
 
         (reward, next_state, done)
@@ -204,9 +204,10 @@ impl Env<usize, f64, usize> for Taxi {
     where
         T: rand::Rng + ?Sized,
     {
-        let weights = self.initial_states_distribution.iter();
-        let idxs = WeightedIndex::new(weights).unwrap();
-        self.state = idxs.sample(rng);
+        let states = self.p_states_0.iter();
+        let states = WeightedIndex::new(states).unwrap();
+
+        self.state = states.sample(rng);
 
         self
     }
