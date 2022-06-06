@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::Env;
 
-/// Port of `Taxi` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/b704d4660e45edc7bb674a6c971d376990d340dc/gym/envs/toy_text/taxi.py).
+/// Port of `Taxi-v3` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/b704d4660e45edc7bb674a6c971d376990d340dc/gym/envs/toy_text/taxi.py).
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Taxi {
     state: usize,
@@ -58,19 +58,31 @@ impl Taxi {
         // Check if next state is terminal state.
         let mut is_terminal = ArrayBase::from_elem((Self::STATES, Self::ACTIONS), false);
 
+        // For each row ...
         for row in 0..Self::ROWS {
+            // ... for each column ...
             for col in 0..Self::COLS {
+                // ... for each target location (plus the one in which the pick-up occur) ...
                 for pass_idx in 0..(Self::LOCS.len() + 1) {
+                    // ... for each target location ...
                     for dest_idx in 0..Self::LOCS.len() {
+                        // Map the bi-dimensional location of the taxi to the one dimensional.
                         let state = Self::encode(row, col, pass_idx, dest_idx);
+                        // Check is current location is not a target location.
                         if pass_idx < 4 && pass_idx != dest_idx {
+                            // Set the current location as a potential starting state.
                             p_states_0[state] += 1.;
                         }
+                        // ... for each action ...
                         for action in 0..Self::ACTIONS {
-                            let (mut new_row, mut new_col, mut new_pass_idx) = (row, col, pass_idx);
+                            // Initialize location, reward, terminal state flag.
                             let mut reward = -1.;
                             let mut done = false;
                             let taxi_loc = (row, col);
+                            // Copy current location.
+                            let (mut new_row, mut new_col, mut new_pass_idx) = (row, col, pass_idx);
+
+                            // Match current action.
                             match action {
                                 // Move south.
                                 0 => {
@@ -118,7 +130,11 @@ impl Taxi {
                                 // Invalid action.
                                 _ => unreachable!(),
                             };
+
+                            // Encode the new location.
                             let new_state = Self::encode(new_row, new_col, new_pass_idx, dest_idx);
+
+                            // Update the transition matrix.
                             transition_matrix[(state, action)] = new_state;
                             reward_matrix[(state, action)] = reward;
                             is_terminal[(state, action)] = done;
@@ -128,6 +144,7 @@ impl Taxi {
             }
         }
 
+        // Normalize initial state distribution probability.
         p_states_0 /= p_states_0.sum();
 
         Self {
@@ -189,12 +206,13 @@ impl Env<usize, f64, usize> for Taxi {
     where
         T: rand::Rng + ?Sized,
     {
+        // Map transition matrix index.
         let idx = (self.state, *action);
-
+        // Get reward, next state and termination flag.
         let next_state = self.transition_matrix[idx];
         let reward = self.reward_matrix[idx];
         let done = self.is_terminal[idx];
-
+        // Update current state.
         self.state = next_state;
 
         (reward, next_state, done)
@@ -204,9 +222,10 @@ impl Env<usize, f64, usize> for Taxi {
     where
         T: rand::Rng + ?Sized,
     {
+        // Initialize new index distribution for initial state.
         let states = self.p_states_0.iter();
         let states = WeightedIndex::new(states).unwrap();
-
+        // Sample new initial state.
         self.state = states.sample(rng);
 
         self
