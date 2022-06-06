@@ -66,66 +66,66 @@ impl Taxi {
                         let state = Self::encode(row, col, pass_idx, dest_idx);
                         if pass_idx < 4 && pass_idx != dest_idx {
                             initial_states_distribution[state] += 1.;
-                            for action in 0..Self::ACTIONS {
-                                let (mut new_row, mut new_col, mut new_pass_idx) = (row, col, pass_idx);
-                                let mut reward = -1.;
-                                let mut done = false;
-                                let taxi_loc = (row, col);
-                                match action {
-                                    // Move south.
-                                    0 => {
-                                        new_row = usize::min(row + 1, Self::MAX_ROW);
+                        }
+                        for action in 0..Self::ACTIONS {
+                            let (mut new_row, mut new_col, mut new_pass_idx) = (row, col, pass_idx);
+                            let mut reward = -1.;
+                            let mut done = false;
+                            let taxi_loc = (row, col);
+                            match action {
+                                // Move south.
+                                0 => {
+                                    new_row = usize::min(row + 1, Self::MAX_ROW);
+                                }
+                                // Move north.
+                                1 => {
+                                    // new_row = max(row - 1, 0)
+                                    new_row = usize::saturating_sub(row, 1);
+                                }
+                                // Move east.
+                                2 => {
+                                    if Self::MAP[1 + row].chars().nth(2 * col + 2) == Some(':') {
+                                        new_col = usize::min(col + 1, Self::MAX_COL);
                                     }
-                                    // Move north.
-                                    1 => {
-                                        // new_row = max(row - 1, 0)
-                                        new_row = usize::saturating_sub(row, 1);
+                                }
+                                // Move west.
+                                3 => {
+                                    if Self::MAP[1 + row].chars().nth(2 * col) == Some(':') {
+                                        new_col = usize::max(col - 1, 0);
                                     }
-                                    // Move east.
-                                    2 => {
-                                        if Self::MAP[1 + row].chars().nth(2 * col + 2) == Some(':') {
-                                            new_col = usize::min(col + 1, Self::MAX_COL);
-                                        }
+                                }
+                                // Pick-up.
+                                4 => {
+                                    if pass_idx < 4 && taxi_loc == Self::LOCS[pass_idx] {
+                                        new_pass_idx = 4;
+                                    } else {
+                                        // Passenger not at location.
+                                        reward = -10.;
                                     }
-                                    // Move west.
-                                    3 => {
-                                        if Self::MAP[1 + row].chars().nth(2 * col) == Some(':') {
-                                            new_col = usize::max(col - 1, 0);
-                                        }
+                                }
+                                // Drop-off.
+                                5 => {
+                                    if pass_idx == 4 && taxi_loc == Self::LOCS[dest_idx] {
+                                        new_pass_idx = dest_idx;
+                                        reward = 20.;
+                                        done = true;
+                                    } else if pass_idx == 4 && Self::LOCS.iter().any(|&loc| taxi_loc == loc) {
+                                        new_pass_idx = Self::LOCS.iter().position(|&loc| taxi_loc == loc).unwrap();
+                                    } else {
+                                        // Dropoff at wrong location.
+                                        reward = -10.;
                                     }
-                                    // Pick-up.
-                                    4 => {
-                                        if pass_idx < 4 && taxi_loc == Self::LOCS[pass_idx] {
-                                            new_pass_idx = 4;
-                                        } else {
-                                            // Passenger not at location.
-                                            reward = -10.;
-                                        }
-                                    }
-                                    // Drop-off.
-                                    5 => {
-                                        if pass_idx == 4 && taxi_loc == Self::LOCS[dest_idx] {
-                                            new_pass_idx = dest_idx;
-                                            reward = 20.;
-                                            done = true;
-                                        } else if pass_idx == 4 && Self::LOCS.iter().any(|&loc| taxi_loc == loc) {
-                                            new_pass_idx = Self::LOCS.iter().position(|&loc| taxi_loc == loc).unwrap();
-                                        } else {
-                                            // Dropoff at wrong location.
-                                            reward = -10.;
-                                        }
-                                    }
-                                    // Invalid action.
-                                    _ => unreachable!(),
-                                };
-                                let new_state = Self::encode(new_row, new_col, new_pass_idx, dest_idx);
-                                transition_matrix
-                                    .get_mut(&state)
-                                    .unwrap()
-                                    .get_mut(&action)
-                                    .unwrap()
-                                    .push((1.0, new_state, reward, done));
-                            }
+                                }
+                                // Invalid action.
+                                _ => unreachable!(),
+                            };
+                            let new_state = Self::encode(new_row, new_col, new_pass_idx, dest_idx);
+                            transition_matrix
+                                .get_mut(&state)
+                                .unwrap()
+                                .get_mut(&action)
+                                .unwrap()
+                                .push((1.0, new_state, reward, done));
                         }
                     }
                 }
