@@ -132,4 +132,61 @@ mod envs {
             // FIXME: let _: FarWest<Normal<f64>> = serde_json::from_str(&json).unwrap();
         }
     }
+
+    mod taxi {
+        use std::collections::BTreeSet;
+
+        use reilly::envs::{Env, Taxi};
+
+        #[test]
+        fn actions_iter() {
+            let env = Taxi::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.actions_iter()),
+                BTreeSet::from_iter(0..Taxi::ACTIONS),
+            );
+        }
+
+        #[test]
+        fn states_iter() {
+            let env = Taxi::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.states_iter()),
+                BTreeSet::from_iter(0..Taxi::STATES),
+            );
+        }
+
+        #[test]
+        fn get_state() {
+            let env = Taxi::new();
+
+            assert_eq!(env.get_state(), 0);
+        }
+
+        #[test]
+        #[ignore]
+        fn call_mut() {
+            todo!()
+        }
+
+        #[test]
+        #[ignore]
+        fn reset() {
+            todo!()
+        }
+
+        #[test]
+        #[ignore]
+        fn serialize() {
+            todo!()
+        }
+
+        #[test]
+        #[ignore]
+        fn deserialize() {
+            todo!()
+        }
+    }
 }

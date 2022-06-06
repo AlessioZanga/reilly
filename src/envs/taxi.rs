@@ -19,7 +19,8 @@ pub struct Taxi {
 }
 
 impl Taxi {
-    const MAP: [&'static str; 7] = [
+    /// Textual representation of the environment map.
+    pub const MAP: [&'static str; 7] = [
         "+---------+",
         "|R: | : :G|",
         "| : | : : |",
@@ -40,8 +41,10 @@ impl Taxi {
     const MAX_ROW: usize = Self::ROWS - 1;
     const MAX_COL: usize = Self::COLS - 1;
 
-    const STATES: usize = 500;
-    const ACTIONS: usize = 6;
+    /// Cardinality of the states space.
+    pub const STATES: usize = 500;
+    /// Cardinality of the states space.
+    pub const ACTIONS: usize = 6;
 
     const LOCS: [(usize, usize); 4] = [(0, 0), (0, 4), (4, 0), (4, 3)];
 
@@ -75,7 +78,8 @@ impl Taxi {
                                     }
                                     // Move north.
                                     1 => {
-                                        new_row = usize::max(row - 1, 0);
+                                        // new_row = max(row - 1, 0)
+                                        new_row = usize::saturating_sub(row, 1);
                                     }
                                     // Move east.
                                     2 => {
@@ -162,12 +166,6 @@ impl Taxi {
         assert 0 <= i < 5
         return reversed(out)
     */
-}
-
-impl Default for Taxi {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl Display for Taxi {

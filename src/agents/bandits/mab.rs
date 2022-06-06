@@ -53,22 +53,8 @@ where
     R: Reward,
     V: Arm<R>,
 {
-    /// Constructs a sequence of arms given the action space.
-    pub fn new<I>(actions_iter: I) -> Self
-    where
-        I: Iterator<Item = A>,
-    {
-        let arms = actions_iter.map(|a| (a, Default::default())).collect();
-
-        Self {
-            _r: PhantomData,
-            arms,
-            count: 0,
-        }
-    }
-
     /// Constructs a sequence of arms given the (action, arm) pairs.
-    pub fn from_actions_arms_iter<I>(actions_arms_iter: I) -> Self
+    pub fn new<I>(actions_arms_iter: I) -> Self
     where
         I: Iterator<Item = (A, V)>,
     {

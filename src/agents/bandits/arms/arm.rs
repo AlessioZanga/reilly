@@ -5,7 +5,7 @@ use rand::prelude::*;
 use crate::types::Reward;
 
 /// Definition of a generic bandit arm.
-pub trait Arm<R>: Clone + Debug + Default
+pub trait Arm<R>: Clone + Debug
 where
     R: Reward,
 {
