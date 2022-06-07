@@ -198,4 +198,136 @@ mod envs {
             let _: Taxi = serde_json::from_str(&json).unwrap();
         }
     }
+
+    mod frozen_lake_noslippery {
+        use std::collections::BTreeSet;
+
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::envs::{Env, FrozenLake4x4};
+
+        #[test]
+        fn actions_iter() {
+            let env = FrozenLake4x4::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.actions_iter()),
+                BTreeSet::from_iter(0..FrozenLake4x4::ACTIONS),
+            );
+        }
+
+        #[test]
+        fn states_iter() {
+            let env = FrozenLake4x4::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.states_iter()),
+                BTreeSet::from_iter(0..FrozenLake4x4::STATES),
+            );
+        }
+
+        #[test]
+        fn get_state() {
+            let env = FrozenLake4x4::new();
+
+            assert_eq!(env.get_state(), 0);
+        }
+
+        #[test]
+        fn call_mut() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = FrozenLake4x4::new();
+
+            env.call_mut(&0, &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = FrozenLake4x4::new();
+
+            env.reset(&mut rng);
+        }
+
+        #[test]
+        fn serialize() {
+            let env = FrozenLake4x4::new();
+
+            serde_json::to_string(&env).unwrap();
+        }
+
+        #[test]
+        fn deserialize() {
+            let env = FrozenLake4x4::new();
+
+            let json = serde_json::to_string(&env).unwrap();
+            let _: FrozenLake4x4 = serde_json::from_str(&json).unwrap();
+        }
+    }
+
+    mod frozen_lake_slippery {
+        use std::collections::BTreeSet;
+
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::envs::{Env, FrozenLake4x4Slippery};
+
+        #[test]
+        fn actions_iter() {
+            let env = FrozenLake4x4Slippery::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.actions_iter()),
+                BTreeSet::from_iter(0..FrozenLake4x4Slippery::ACTIONS),
+            );
+        }
+
+        #[test]
+        fn states_iter() {
+            let env = FrozenLake4x4Slippery::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.states_iter()),
+                BTreeSet::from_iter(0..FrozenLake4x4Slippery::STATES),
+            );
+        }
+
+        #[test]
+        fn get_state() {
+            let env = FrozenLake4x4Slippery::new();
+
+            assert_eq!(env.get_state(), 0);
+        }
+
+        #[test]
+        fn call_mut() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = FrozenLake4x4Slippery::new();
+
+            env.call_mut(&0, &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = FrozenLake4x4Slippery::new();
+
+            env.reset(&mut rng);
+        }
+
+        #[test]
+        fn serialize() {
+            let env = FrozenLake4x4Slippery::new();
+
+            serde_json::to_string(&env).unwrap();
+        }
+
+        #[test]
+        fn deserialize() {
+            let env = FrozenLake4x4Slippery::new();
+
+            let json = serde_json::to_string(&env).unwrap();
+            let _: FrozenLake4x4Slippery = serde_json::from_str(&json).unwrap();
+        }
+    }
 }
