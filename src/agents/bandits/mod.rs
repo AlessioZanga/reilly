@@ -2,4 +2,4 @@
 pub mod arms;
 
 mod mab;
-pub use mab::*;
+pub use mab::MultiArmedBandit;
