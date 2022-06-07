@@ -69,7 +69,7 @@ mod agents {
             );
 
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
-            let action = mab.call(&(), &mut rng);
+            let action = mab.call((), &mut rng);
 
             assert!(mab.actions_iter().any(|a| a == action));
         }
@@ -101,7 +101,7 @@ mod agents {
                 ExpectedValueArms::new(mab),
             );
 
-            mab.update(&actions[0], &0., &(), false);
+            mab.update(actions[0], 0., (), false);
         }
 
         #[test]

@@ -60,10 +60,10 @@ impl Arm<f64> for Bernoulli {
     }
 
     #[allow(unused_parens)]
-    fn update(&mut self, reward: &f64) {
+    fn update(&mut self, reward: f64) {
         // Update the counter and sum of squared rewards.
         self.count += 1;
-        self.srewd += f64::powi(*reward, 2);
+        self.srewd += f64::powi(reward, 2);
         // Update distributions parameter.
         self.alpha += reward;
         self.beta += (1. - reward);

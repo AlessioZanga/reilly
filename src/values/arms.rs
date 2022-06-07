@@ -98,12 +98,12 @@ where
         Box::new(self.arms.keys().cloned())
     }
 
-    fn call<T>(&self, action: &A, rng: &mut T) -> R
+    fn call<T>(&self, action: A, rng: &mut T) -> R
     where
         T: Rng + ?Sized,
     {
         // Get the arm given action.
-        let a = &self.arms[action];
+        let a = &self.arms[&action];
         // Execute the specified algorithm.
         match M {
             // Compute the expected value.
@@ -153,10 +153,10 @@ where
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R, _is_done: bool) {
+    fn update(&mut self, action: A, reward: R, _is_done: bool) {
         // Update the arm association with performed action given the obtained reward.
         self.arms
-            .get_mut(action)
+            .get_mut(&action)
             .expect("Unable to get bandit's arm for given action")
             .update(reward);
         // Increase the counter.

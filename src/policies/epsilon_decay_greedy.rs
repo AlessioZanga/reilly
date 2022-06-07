@@ -64,7 +64,7 @@ impl Display for EpsilonDecayGreedy {
 }
 
 impl Policy for EpsilonDecayGreedy {
-    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -91,12 +91,7 @@ impl Policy for EpsilonDecayGreedy {
         self.random.reset();
     }
 
-    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, is_done: bool)
-    where
-        A: Action,
-        R: Reward,
-        S: State,
-    {
+    fn update(&mut self, is_done: bool) {
         // If the episode has ended and epsilon has not reached the lower bound ...
         if is_done && self.epsilon > self.epsilon_min {
             // ... set epsilon to the maximum value between the lower bound and the updated epsilon.

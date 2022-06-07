@@ -76,7 +76,7 @@ where
         self.v.states_iter()
     }
 
-    fn call<T>(&self, state: &S, rng: &mut T) -> A
+    fn call<T>(&self, state: S, rng: &mut T) -> A
     where
         T: Rng + ?Sized,
     {
@@ -93,10 +93,10 @@ where
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool) {
-        // Update the policy.
-        self.pi.update(action, reward, state, is_done);
+    fn update(&mut self, action: A, reward: R, state: S, is_done: bool) {
         // Update the (state-)action value function.
         self.v.update(action, reward, state, is_done);
+        // Update the policy.
+        self.pi.update(is_done);
     }
 }
