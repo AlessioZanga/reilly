@@ -36,10 +36,7 @@ impl Policy for Random {
         T: Rng + ?Sized,
     {
         // Select a random action form the action space.
-        f.actions_iter()
-            .choose(rng)
-            .expect("Unable to choose an action")
-            .clone()
+        f.actions_iter().choose(rng).expect("Unable to choose an action")
     }
 
     fn reset(&mut self) {}

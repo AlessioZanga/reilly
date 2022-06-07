@@ -53,22 +53,8 @@ where
     R: Reward,
     V: Arm<R>,
 {
-    /// Constructs a sequence of arms given the action space.
-    pub fn new<I>(actions_iter: I) -> Self
-    where
-        I: Iterator<Item = A>,
-    {
-        let arms = actions_iter.map(|a| (a, Default::default())).collect();
-
-        Self {
-            _r: PhantomData,
-            arms,
-            count: 0,
-        }
-    }
-
     /// Constructs a sequence of arms given the (action, arm) pairs.
-    pub fn from_actions_arms_iter<I>(actions_arms_iter: I) -> Self
+    pub fn new<I>(actions_arms_iter: I) -> Self
     where
         I: Iterator<Item = (A, V)>,
     {
@@ -110,8 +96,8 @@ where
     R: Reward,
     V: Arm<R>,
 {
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
-        Box::new(self.arms.keys())
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
+        Box::new(self.arms.keys().cloned())
     }
 
     fn call<T>(&self, action: &A, rng: &mut T) -> R
@@ -244,11 +230,11 @@ where
         }
     }
 
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
         self.v.actions_iter()
     }
 
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a> {
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a> {
         self.v.states_iter()
     }
 

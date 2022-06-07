@@ -33,15 +33,15 @@ mod sessions {
             .map(|d| d.unwrap());
             let mut env = FarWest::new(env, 1_000);
             // Initialize the MAB.
-            let mab = env.actions_iter().map(|&a| (a, arms::Normal::default()));
+            let mab = env.actions_iter().map(|a| (a, arms::Normal::new()));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonDecayGreedy::default(),
                 // Construct a action value function.
-                UCB1NormalArms::from_actions_arms_iter(mab),
+                UCB1NormalArms::new(mab),
             );
             // Execute the experiment session.
-            let session = TrainTest::new(10, 3, 500);
+            let session = TrainTest::new(10, 3, 100);
             let mut data = session.call(&mut mab, &mut env, &mut rng);
             // Write data to CSV.
             let mut file = File::create("tests/out-train_test-call.csv").unwrap();
@@ -64,19 +64,19 @@ mod sessions {
             .map(|d| d.unwrap());
             let env = FarWest::new(env, 1_000);
             // Initialize the MABs.
-            let mabs: Vec<_> = env.actions_iter().map(|&a| (a, arms::Normal::default())).collect();
+            let mabs: Vec<_> = env.actions_iter().map(|a| (a, arms::Normal::new())).collect();
             let mabs = [0.025, 0.050, 0.075, 0.10, 0.15, 0.20, 0.25].into_iter().map(|e| {
                 MultiArmedBandit::new(
                     // Initialize an epsilon-greedy policy.
                     EpsilonDecayGreedy::new(e, 0.999, 0.01),
                     // Construct a action value function.
-                    UCB1NormalArms::from_actions_arms_iter(mabs.clone().into_iter()),
+                    UCB1NormalArms::new(mabs.clone().into_iter()),
                 )
             });
             // Pair each agent with its environment.
             let mut mabs_envs: Vec<_> = mabs.zip(std::iter::repeat(env)).collect();
             // Execute the experiment session.
-            let session = TrainTest::new(10, 10, 500);
+            let session = TrainTest::new(10, 10, 100);
             let mut data = session.par_call(mabs_envs.par_iter_mut(), &mut rng);
             // Write data to CSV.
             let mut file = File::create("tests/out-train_test-par_call.csv").unwrap();
@@ -85,14 +85,14 @@ mod sessions {
 
         #[test]
         fn serialize() {
-            let session = TrainTest::new(10, 3, 500);
+            let session = TrainTest::new(10, 3, 100);
 
             serde_json::to_string(&session).unwrap();
         }
 
         #[test]
         fn deserialize() {
-            let session = TrainTest::new(10, 3, 500);
+            let session = TrainTest::new(10, 3, 100);
 
             let json = serde_json::to_string(&session).unwrap();
             let _: TrainTest = serde_json::from_str(&json).unwrap();

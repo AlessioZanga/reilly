@@ -31,19 +31,6 @@ impl Bernoulli {
     }
 }
 
-impl Default for Bernoulli {
-    fn default() -> Self {
-        Self {
-            count: 0,
-            srewd: 0.,
-            alpha_0: 1.,
-            beta_0: 1.,
-            alpha: 1.,
-            beta: 1.,
-        }
-    }
-}
-
 impl Arm<f64> for Bernoulli {
     fn get_count(&self) -> usize {
         self.count

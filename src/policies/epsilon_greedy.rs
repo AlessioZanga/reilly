@@ -28,8 +28,8 @@ impl EpsilonGreedy {
         Self {
             epsilon_0: epsilon,
             epsilon,
-            greedy: Default::default(),
-            random: Default::default(),
+            greedy: Greedy::new(),
+            random: Random::new(),
         }
     }
 }

@@ -12,8 +12,6 @@ pub struct FarWest<D>
 where
     D: Clone + Debug + Distribution<f64>,
 {
-    // TODO: Remove this vector.
-    actions: Vec<usize>,
     distributions: Vec<D>,
     count: usize,
     end: usize,
@@ -28,11 +26,9 @@ where
     where
         I: Iterator<Item = D>,
     {
-        let distributions: Vec<_> = distributions.collect();
-        let actions = (0..distributions.len()).collect();
+        let distributions = distributions.collect();
 
         Self {
-            actions,
             distributions,
             count: 0,
             end,
@@ -54,12 +50,12 @@ impl<D> Env<usize, f64, ()> for FarWest<D>
 where
     D: Clone + Debug + Distribution<f64>,
 {
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a usize> + 'a> {
-        Box::new(self.actions.iter())
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = usize> + 'a> {
+        Box::new(0..self.distributions.len())
     }
 
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a ()> + 'a> {
-        Box::new([()].iter())
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = ()> + 'a> {
+        Box::new([()].into_iter())
     }
 
     fn get_state(&self) {}
@@ -76,7 +72,10 @@ where
         (self.distributions[*action].sample(rng), (), is_done)
     }
 
-    fn reset(&mut self) -> &mut Self {
+    fn reset<T>(&mut self, _rng: &mut T) -> &mut Self
+    where
+        T: rand::Rng + ?Sized,
+    {
         // Reset the time step counter.
         self.count = 0;
 

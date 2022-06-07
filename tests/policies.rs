@@ -24,10 +24,9 @@ mod policies {
             ];
 
             for (i, j) in data {
-                let pi: Greedy = Default::default();
-                let v = ExpectedValueArms::from_actions_arms_iter(
-                    i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
-                );
+                let pi = Greedy::new();
+                let v =
+                    ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
                 assert_eq!(pi.call(&v, &(), &mut rng), j);
             }
@@ -38,15 +37,15 @@ mod policies {
         fn call_should_panic() {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
-            let pi: Greedy = Default::default();
-            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let pi = Greedy::new();
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
 
         #[test]
         fn reset() {
-            let mut pi: Greedy = Default::default();
+            let mut pi = Greedy::new();
 
             pi.reset();
         }
@@ -60,14 +59,14 @@ mod policies {
 
         #[test]
         fn serialize() {
-            let pi: Greedy = Default::default();
+            let pi = Greedy::new();
 
             serde_json::to_string(&pi).unwrap();
         }
 
         #[test]
         fn deserialize() {
-            let pi: Greedy = Default::default();
+            let pi = Greedy::new();
 
             let json = serde_json::to_string(&pi).unwrap();
             let _: Greedy = serde_json::from_str(&json).unwrap();
@@ -98,9 +97,8 @@ mod policies {
 
             for (i, _) in data {
                 let pi: EpsilonGreedy = Default::default();
-                let v = ExpectedValueArms::from_actions_arms_iter(
-                    i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
-                );
+                let v =
+                    ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
                 pi.call(&v, &(), &mut rng);
             }
@@ -112,7 +110,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi = EpsilonGreedy::new(0.10);
-            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -160,7 +158,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: EpsilonDecayGreedy = Default::default();
-            let v = ExpectedValueArms::from_actions_arms_iter([(0, Bernoulli::new(1., 1.))].into_iter());
+            let v = ExpectedValueArms::new([(0, Bernoulli::new(1., 1.))].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -171,7 +169,7 @@ mod policies {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
             let pi: EpsilonDecayGreedy = Default::default();
-            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
@@ -233,10 +231,9 @@ mod policies {
             ];
 
             for i in data {
-                let pi: Random = Default::default();
-                let v = ExpectedValueArms::from_actions_arms_iter(
-                    i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))),
-                );
+                let pi = Random::new();
+                let v =
+                    ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
                 let size = 100_000;
                 let mut count: HashMap<i32, usize> = Default::default();
@@ -263,15 +260,15 @@ mod policies {
         fn call_should_panic() {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
-            let pi: Random = Default::default();
-            let v = ExpectedValueArms::<usize, f64, Bernoulli>::from_actions_arms_iter([].into_iter());
+            let pi = Random::new();
+            let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, &(), &mut rng);
         }
 
         #[test]
         fn reset() {
-            let mut pi: Random = Default::default();
+            let mut pi = Random::new();
 
             pi.reset();
         }
@@ -285,14 +282,14 @@ mod policies {
 
         #[test]
         fn serialize() {
-            let pi: Random = Default::default();
+            let pi = Random::new();
 
             serde_json::to_string(&pi).unwrap();
         }
 
         #[test]
         fn deserialize() {
-            let pi: Random = Default::default();
+            let pi = Random::new();
 
             let json = serde_json::to_string(&pi).unwrap();
             let _: Random = serde_json::from_str(&json).unwrap();

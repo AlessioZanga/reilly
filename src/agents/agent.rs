@@ -21,10 +21,10 @@ where
     fn new(pi: P, v: V) -> Self;
 
     /// Iterates of the action space.
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
 
     /// Iterates of the state space.
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a>;
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a>;
 
     /// Computes the action for given state.
     fn call<T>(&self, state: &S, rng: &mut T) -> A

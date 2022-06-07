@@ -11,7 +11,7 @@ where
     R: Reward,
 {
     /// Iterates of the action space.
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
 
     /// Computes the expected reward of the given action.
     fn call<T>(&self, action: &A, rng: &mut T) -> R
@@ -33,10 +33,10 @@ where
     S: State,
 {
     /// Iterates of the action space.
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a>;
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
 
     /// Iterates of the state space.
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a S> + 'a>;
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a>;
 
     /// Computes the expected reward of the given action-state pair.
     fn call<T>(&self, action: &A, state: &S, rng: &mut T) -> R
@@ -58,13 +58,13 @@ where
     R: Reward,
     V: ActionValue<A, R>,
 {
-    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a A> + 'a> {
+    fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
         self.actions_iter()
     }
 
-    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = &'a ()> + 'a> {
+    fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = ()> + 'a> {
         // The nil state is the only state.
-        Box::new([()].iter())
+        Box::new([()].into_iter())
     }
 
     fn call<T>(&self, action: &A, _state: &(), rng: &mut T) -> R

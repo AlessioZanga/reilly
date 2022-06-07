@@ -16,12 +16,12 @@ mod agents {
         fn new() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let _ = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
         }
 
@@ -29,63 +29,60 @@ mod agents {
         fn actions_iter() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
-            assert_eq!(
-                BTreeSet::from_iter(mab.actions_iter()),
-                BTreeSet::from_iter(actions.iter()),
-            );
+            assert_eq!(BTreeSet::from_iter(mab.actions_iter()), BTreeSet::from_iter(actions),);
         }
 
         #[test]
         fn states_iter() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
-            assert!(mab.states_iter().eq([&()].into_iter()));
+            assert!(mab.states_iter().eq([()].into_iter()));
         }
 
         #[test]
         fn call() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
             let action = mab.call(&(), &mut rng);
 
-            assert!(mab.actions_iter().any(|&a| a == action));
+            assert!(mab.actions_iter().any(|a| a == action));
         }
 
         #[test]
         fn reset() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
             mab.reset();
@@ -95,12 +92,12 @@ mod agents {
         fn update() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mut mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
             mab.update(&actions[0], &0., &(), false);
@@ -110,12 +107,12 @@ mod agents {
         fn serialize() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
             serde_json::to_string(&mab).unwrap();
@@ -125,12 +122,12 @@ mod agents {
         fn deserialize() {
             let actions = vec![0, 1, 2, 3, 4];
 
-            let mab = actions.iter().map(|&a| (a, Bernoulli::default()));
+            let mab = actions.iter().map(|&a| (a, Bernoulli::new(1., 1.)));
             let mab = MultiArmedBandit::new(
                 // Initialize an epsilon-greedy policy.
                 EpsilonGreedy::new(0.10),
                 // Construct a action value function.
-                ExpectedValueArms::from_actions_arms_iter(mab),
+                ExpectedValueArms::new(mab),
             );
 
             let json = serde_json::to_string(&mab).unwrap();
