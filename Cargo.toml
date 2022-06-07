@@ -27,6 +27,3 @@ serde = { version = "^1.0", features = ["derive"] }
 approx = "^0.5"
 rand_xoshiro = "^0.6"
 serde_json = "^1.0"
-
-[profile.coverage]
-inherits = "dev"
