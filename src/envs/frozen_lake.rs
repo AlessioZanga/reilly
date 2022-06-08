@@ -184,12 +184,12 @@ impl<const N: usize, const S: bool> Env<usize, f64, usize> for FrozenLake<N, S> 
         self.state
     }
 
-    fn call_mut<T>(&mut self, action: &usize, rng: &mut T) -> (f64, usize, bool)
+    fn call_mut<T>(&mut self, action: usize, rng: &mut T) -> (f64, usize, bool)
     where
         T: rand::Rng + ?Sized,
     {
         // Copy current action.
-        let mut action = *action;
+        let mut action = action;
         // If slippery ...
         if S {
             // ... get new action distribution ...

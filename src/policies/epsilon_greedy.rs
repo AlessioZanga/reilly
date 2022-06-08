@@ -47,7 +47,7 @@ impl Display for EpsilonGreedy {
 }
 
 impl Policy for EpsilonGreedy {
-    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -74,11 +74,5 @@ impl Policy for EpsilonGreedy {
         self.random.reset();
     }
 
-    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, _is_done: bool)
-    where
-        A: Action,
-        R: Reward,
-        S: State,
-    {
-    }
+    fn update(&mut self, _is_done: bool) {}
 }

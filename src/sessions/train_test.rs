@@ -92,11 +92,11 @@ impl Session for TrainTest {
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
-                    let action = agent.call(&state, rng);
+                    let action = agent.call(state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action, rng);
+                    (reward, state, is_done) = environment.call_mut(action.clone(), rng);
                     // ... update the agent.
-                    agent.update(&action, &reward, &state, is_done);
+                    agent.update(action, reward, state.clone(), is_done);
                 }
                 // Update progress.
                 progress.inc(1);
@@ -114,9 +114,9 @@ impl Session for TrainTest {
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
-                    let action = agent.call(&state, rng);
+                    let action = agent.call(state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action, rng);
+                    (reward, state, is_done) = environment.call_mut(action, rng);
                     // ... update the cumulative reward.
                     cum_reward += reward.to_f64().unwrap();
                 }

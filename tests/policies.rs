@@ -28,7 +28,7 @@ mod policies {
                 let v =
                     ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
-                assert_eq!(pi.call(&v, &(), &mut rng), j);
+                assert_eq!(pi.call(&v, (), &mut rng), j);
             }
         }
 
@@ -40,7 +40,7 @@ mod policies {
             let pi = Greedy::new();
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
-            pi.call(&v, &(), &mut rng);
+            pi.call(&v, (), &mut rng);
         }
 
         #[test]
@@ -54,7 +54,7 @@ mod policies {
         fn update() {
             let mut pi = Greedy::new();
 
-            pi.update(&0, &0., &(), true);
+            pi.update(true);
         }
 
         #[test]
@@ -100,7 +100,7 @@ mod policies {
                 let v =
                     ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
-                pi.call(&v, &(), &mut rng);
+                pi.call(&v, (), &mut rng);
             }
         }
 
@@ -112,7 +112,7 @@ mod policies {
             let pi = EpsilonGreedy::new(0.10);
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
-            pi.call(&v, &(), &mut rng);
+            pi.call(&v, (), &mut rng);
         }
 
         #[test]
@@ -126,7 +126,7 @@ mod policies {
         fn update() {
             let mut pi = EpsilonGreedy::new(0.10);
 
-            pi.update(&0, &0., &(), true);
+            pi.update(true);
         }
 
         #[test]
@@ -160,7 +160,7 @@ mod policies {
             let pi: EpsilonDecayGreedy = Default::default();
             let v = ExpectedValueArms::new([(0, Bernoulli::new(1., 1.))].into_iter());
 
-            pi.call(&v, &(), &mut rng);
+            pi.call(&v, (), &mut rng);
         }
 
         #[test]
@@ -171,7 +171,7 @@ mod policies {
             let pi: EpsilonDecayGreedy = Default::default();
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
-            pi.call(&v, &(), &mut rng);
+            pi.call(&v, (), &mut rng);
         }
 
         #[test]
@@ -185,7 +185,7 @@ mod policies {
         fn update() {
             let mut pi: EpsilonDecayGreedy = Default::default();
 
-            pi.update(&0, &0., &(), true);
+            pi.update(true);
         }
 
         #[test]
@@ -240,7 +240,7 @@ mod policies {
                 let relative_frequency = 1. / v.actions_iter().len() as f64;
 
                 for _ in 0..size {
-                    let a = pi.call(&v, &(), &mut rng);
+                    let a = pi.call(&v, (), &mut rng);
                     *count.entry(a).or_default() += 1;
                 }
 
@@ -263,7 +263,7 @@ mod policies {
             let pi = Random::new();
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
-            pi.call(&v, &(), &mut rng);
+            pi.call(&v, (), &mut rng);
         }
 
         #[test]
@@ -277,7 +277,7 @@ mod policies {
         fn update() {
             let mut pi = Random::new();
 
-            pi.update(&0, &0., &(), true);
+            pi.update(true);
         }
 
         #[test]

@@ -27,7 +27,7 @@ where
     fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a>;
 
     /// Computes the action for given state.
-    fn call<T>(&self, state: &S, rng: &mut T) -> A
+    fn call<T>(&self, state: S, rng: &mut T) -> A
     where
         T: Rng + ?Sized;
 
@@ -35,5 +35,5 @@ where
     fn reset(&mut self) -> &mut Self;
 
     /// Updates the agent given performed action, obtained reward, next state and end-of-episode flag.
-    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool);
+    fn update(&mut self, action: A, reward: R, state: S, is_done: bool);
 }

@@ -46,10 +46,10 @@ impl Arm<f64> for Normal {
             .sample(rng)
     }
 
-    fn update(&mut self, reward: &f64) {
+    fn update(&mut self, reward: f64) {
         // Update the counter and sum of squared rewards.
         self.count += 1;
-        self.srewd += f64::powi(*reward, 2);
+        self.srewd += f64::powi(reward, 2);
         // Update as Q(a) := Q(a) + 1 / N(a) * [R - Q(a)].
         self.mean += (1. / self.count as f64) * (reward - self.mean);
     }

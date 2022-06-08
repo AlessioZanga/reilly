@@ -2,4 +2,4 @@
 pub mod arms;
 
 mod mab;
-pub use mab::*;
+pub use mab::{Arms, ExpectedValueArms, MultiArmedBandit, ThompsonSamplingArms, UCB1Arms, UCB1NormalArms};

@@ -7,9 +7,8 @@ use std::{
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
-use super::arms::Arm;
 use crate::{
-    agents::Agent,
+    agents::{bandits::arms::Arm, Agent},
     policies::Policy,
     types::{Action, Reward, State},
     values::{ActionValue, StateActionValue},
@@ -100,12 +99,12 @@ where
         Box::new(self.arms.keys().cloned())
     }
 
-    fn call<T>(&self, action: &A, rng: &mut T) -> R
+    fn call<T>(&self, action: A, rng: &mut T) -> R
     where
         T: Rng + ?Sized,
     {
         // Get the arm given action.
-        let a = &self.arms[action];
+        let a = &self.arms[&action];
         // Execute the specified algorithm.
         match M {
             // Compute the expected value.
@@ -155,10 +154,10 @@ where
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R, _is_done: bool) {
+    fn update(&mut self, action: A, reward: R, _is_done: bool) {
         // Update the arm association with performed action given the obtained reward.
         self.arms
-            .get_mut(action)
+            .get_mut(&action)
             .expect("Unable to get bandit's arm for given action")
             .update(reward);
         // Increase the counter.
@@ -238,7 +237,7 @@ where
         self.v.states_iter()
     }
 
-    fn call<T>(&self, state: &S, rng: &mut T) -> A
+    fn call<T>(&self, state: S, rng: &mut T) -> A
     where
         T: Rng + ?Sized,
     {
@@ -247,18 +246,18 @@ where
     }
 
     fn reset(&mut self) -> &mut Self {
-        // Reset the policy.
-        self.pi.reset();
         // Reset the (state-)action value function.
         self.v.reset();
+        // Reset the policy.
+        self.pi.reset();
 
         self
     }
 
-    fn update(&mut self, action: &A, reward: &R, state: &S, is_done: bool) {
-        // Update the policy.
-        self.pi.update(action, reward, state, is_done);
+    fn update(&mut self, action: A, reward: R, state: S, is_done: bool) {
         // Update the (state-)action value function.
         self.v.update(action, reward, state, is_done);
+        // Update the policy.
+        self.pi.update(is_done);
     }
 }

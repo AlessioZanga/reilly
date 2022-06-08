@@ -27,7 +27,7 @@ impl Display for Random {
 }
 
 impl Policy for Random {
-    fn call<A, R, S, V, T>(&self, f: &V, _state: &S, rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, _state: S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -41,11 +41,5 @@ impl Policy for Random {
 
     fn reset(&mut self) {}
 
-    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, _is_done: bool)
-    where
-        A: Action,
-        R: Reward,
-        S: State,
-    {
-    }
+    fn update(&mut self, _is_done: bool) {}
 }

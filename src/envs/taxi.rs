@@ -207,12 +207,12 @@ impl Env<usize, f64, usize> for Taxi {
         self.state
     }
 
-    fn call_mut<T>(&mut self, action: &usize, _rng: &mut T) -> (f64, usize, bool)
+    fn call_mut<T>(&mut self, action: usize, _rng: &mut T) -> (f64, usize, bool)
     where
         T: rand::Rng + ?Sized,
     {
         // Map transition matrix index.
-        let idx = (self.state, *action);
+        let idx = (self.state, action);
         // Get reward, next state and termination flag.
         let next_state = self.transition_matrix[idx];
         let reward = self.reward_matrix[idx];

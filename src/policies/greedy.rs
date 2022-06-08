@@ -27,7 +27,7 @@ impl Display for Greedy {
 }
 
 impl Policy for Greedy {
-    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -38,7 +38,7 @@ impl Policy for Greedy {
         // For each action ...
         f.actions_iter()
             // ... evaluate the value function, then ...
-            .map(|a| (a.clone(), f.call(&a, state, rng)))
+            .map(|a| (a.clone(), f.call(a, state.clone(), rng)))
             // ... for each (action, reward) pair ...
             .reduce(|(a_i, r_i), (a_j, r_j)|
             // ... maximize the expected reward ...
@@ -54,11 +54,5 @@ impl Policy for Greedy {
 
     fn reset(&mut self) {}
 
-    fn update<A, R, S>(&mut self, _action: &A, _reward: &R, _state: &S, _is_done: bool)
-    where
-        A: Action,
-        R: Reward,
-        S: State,
-    {
-    }
+    fn update(&mut self, _is_done: bool) {}
 }

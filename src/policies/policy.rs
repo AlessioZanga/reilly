@@ -10,7 +10,7 @@ use crate::{
 /// Definition of generic policy.
 pub trait Policy: Clone + Debug + Display {
     /// Chooses the next action given the (state-)value function and the current state.
-    fn call<A, R, S, V, T>(&self, f: &V, state: &S, rng: &mut T) -> A
+    fn call<A, R, S, V, T>(&self, f: &V, state: S, rng: &mut T) -> A
     where
         A: Action,
         R: Reward,
@@ -22,9 +22,5 @@ pub trait Policy: Clone + Debug + Display {
     fn reset(&mut self);
 
     /// Updates the policy given performed action, obtained reward, next state and end-of-episode flag.
-    fn update<A, R, S>(&mut self, action: &A, reward: &R, state: &S, is_done: bool)
-    where
-        A: Action,
-        R: Reward,
-        S: State;
+    fn update(&mut self, is_done: bool);
 }

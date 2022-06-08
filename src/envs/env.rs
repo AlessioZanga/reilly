@@ -22,7 +22,7 @@ where
 
     /// Compute the effect of an action on the environment,
     /// returning the obtained reward, next state and end-of-episode flag.
-    fn call_mut<T>(&mut self, action: &A, rng: &mut T) -> (R, S, bool)
+    fn call_mut<T>(&mut self, action: A, rng: &mut T) -> (R, S, bool)
     where
         T: Rng + ?Sized;
 
