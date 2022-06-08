@@ -6,11 +6,10 @@ mod agents {
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
             agents::{
-                bandits::{arms::Bernoulli, MultiArmedBandit},
+                bandits::{arms::Bernoulli, ExpectedValueArms, MultiArmedBandit},
                 Agent,
             },
             policies::EpsilonGreedy,
-            values::ExpectedValueArms,
         };
 
         #[test]

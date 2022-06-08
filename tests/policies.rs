@@ -4,9 +4,8 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::arms::Bernoulli,
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{Greedy, Policy},
-            values::ExpectedValueArms,
         };
 
         #[test]
@@ -78,9 +77,8 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::arms::Bernoulli,
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{EpsilonGreedy, Policy},
-            values::ExpectedValueArms,
         };
 
         #[test]
@@ -151,9 +149,8 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::arms::Bernoulli,
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{EpsilonDecayGreedy, Policy},
-            values::ExpectedValueArms,
         };
 
         #[test]
@@ -214,9 +211,9 @@ mod policies {
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
         use reilly::{
-            agents::bandits::arms::Bernoulli,
+            agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{Policy, Random},
-            values::{ExpectedValueArms, StateActionValue},
+            values::StateActionValue,
         };
 
         #[test]

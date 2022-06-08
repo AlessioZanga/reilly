@@ -9,13 +9,12 @@ mod sessions {
         use rayon::prelude::*;
         use reilly::{
             agents::{
-                bandits::{arms, MultiArmedBandit},
+                bandits::{arms, MultiArmedBandit, UCB1NormalArms},
                 Agent,
             },
             envs::{Env, FarWest},
             policies::EpsilonDecayGreedy,
             sessions::{Session, TrainTest},
-            values::UCB1NormalArms,
         };
 
         #[test]

@@ -7,8 +7,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Bernoulli,
-                    values::{ExpectedValueArms, StateActionValue},
+                    agents::bandits::{arms::Bernoulli, ExpectedValueArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -77,8 +77,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Normal,
-                    values::{ExpectedValueArms, StateActionValue},
+                    agents::bandits::{arms::Normal, ExpectedValueArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -149,8 +149,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Bernoulli,
-                    values::{StateActionValue, ThompsonSamplingArms},
+                    agents::bandits::{arms::Bernoulli, ThompsonSamplingArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -219,8 +219,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Normal,
-                    values::{StateActionValue, ThompsonSamplingArms},
+                    agents::bandits::{arms::Normal, ThompsonSamplingArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -291,8 +291,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Bernoulli,
-                    values::{StateActionValue, UCB1Arms},
+                    agents::bandits::{arms::Bernoulli, UCB1Arms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -361,8 +361,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Normal,
-                    values::{StateActionValue, UCB1Arms},
+                    agents::bandits::{arms::Normal, UCB1Arms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -433,8 +433,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Bernoulli,
-                    values::{StateActionValue, UCB1NormalArms},
+                    agents::bandits::{arms::Bernoulli, UCB1NormalArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
@@ -503,8 +503,8 @@ mod values {
                 use rand::SeedableRng;
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
-                    agents::bandits::arms::Normal,
-                    values::{StateActionValue, UCB1NormalArms},
+                    agents::bandits::{arms::Normal, UCB1NormalArms},
+                    values::StateActionValue,
                 };
 
                 #[test]
