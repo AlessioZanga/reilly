@@ -74,7 +74,7 @@ mod envs {
             .map(|d| d.unwrap());
             let mut env = FarWest::new(env, 1_000);
 
-            env.call_mut(&0, &mut rng);
+            env.call_mut(0, &mut rng);
         }
 
         #[test]
@@ -172,7 +172,7 @@ mod envs {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
             let mut env = Taxi::new();
 
-            env.call_mut(&0, &mut rng);
+            env.call_mut(0, &mut rng);
         }
 
         #[test]
@@ -238,7 +238,7 @@ mod envs {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
             let mut env = FrozenLake4x4::new();
 
-            env.call_mut(&0, &mut rng);
+            env.call_mut(0, &mut rng);
         }
 
         #[test]
@@ -304,7 +304,7 @@ mod envs {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
             let mut env = FrozenLake4x4Slippery::new();
 
-            env.call_mut(&0, &mut rng);
+            env.call_mut(0, &mut rng);
         }
 
         #[test]

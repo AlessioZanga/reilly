@@ -60,7 +60,7 @@ where
 
     fn get_state(&self) {}
 
-    fn call_mut<T>(&mut self, action: &usize, rng: &mut T) -> (f64, (), bool)
+    fn call_mut<T>(&mut self, action: usize, rng: &mut T) -> (f64, (), bool)
     where
         T: Rng + ?Sized,
     {
@@ -69,7 +69,7 @@ where
         // Increment counter.
         self.count += 1;
 
-        (self.distributions[*action].sample(rng), (), is_done)
+        (self.distributions[action].sample(rng), (), is_done)
     }
 
     fn reset<T>(&mut self, _rng: &mut T) -> &mut Self

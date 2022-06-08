@@ -94,7 +94,7 @@ impl Session for TrainTest {
                     // ... get the action for the current state ...
                     let action = agent.call(state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action, rng);
+                    (reward, state, is_done) = environment.call_mut(action.clone(), rng);
                     // ... update the agent.
                     agent.update(action, reward, state.clone(), is_done);
                 }
@@ -116,7 +116,7 @@ impl Session for TrainTest {
                     // ... get the action for the current state ...
                     let action = agent.call(state, rng);
                     // ... perform the action ...
-                    (reward, state, is_done) = environment.call_mut(&action, rng);
+                    (reward, state, is_done) = environment.call_mut(action, rng);
                     // ... update the cumulative reward.
                     cum_reward += reward.to_f64().unwrap();
                 }

@@ -85,10 +85,10 @@ where
     }
 
     fn reset(&mut self) -> &mut Self {
-        // Reset the policy.
-        self.pi.reset();
         // Reset the (state-)action value function.
         self.v.reset();
+        // Reset the policy.
+        self.pi.reset();
 
         self
     }
