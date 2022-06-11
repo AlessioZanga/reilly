@@ -96,7 +96,7 @@ mod policies {
             ];
 
             for (i, _) in data {
-                let pi: EpsilonGreedy = Default::default();
+                let pi = EpsilonGreedy::new(0.1);
                 let v =
                     ExpectedValueArms::new(i.into_iter().map(|(a, (alpha, beta))| (a, Bernoulli::new(alpha, beta))));
 
@@ -157,7 +157,7 @@ mod policies {
         fn call() {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
-            let pi: EpsilonDecayGreedy = Default::default();
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
             let v = ExpectedValueArms::new([(0, Bernoulli::new(1., 1.))].into_iter());
 
             pi.call(&v, (), &mut rng);
@@ -168,7 +168,7 @@ mod policies {
         fn call_should_panic() {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
-            let pi: EpsilonDecayGreedy = Default::default();
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, (), &mut rng);
@@ -176,28 +176,28 @@ mod policies {
 
         #[test]
         fn reset() {
-            let mut pi: EpsilonDecayGreedy = Default::default();
+            let mut pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
 
             pi.reset();
         }
 
         #[test]
         fn update() {
-            let mut pi: EpsilonDecayGreedy = Default::default();
+            let mut pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
 
             pi.update(true);
         }
 
         #[test]
         fn serialize() {
-            let pi: EpsilonDecayGreedy = Default::default();
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
 
             serde_json::to_string(&pi).unwrap();
         }
 
         #[test]
         fn deserialize() {
-            let pi: EpsilonDecayGreedy = Default::default();
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
 
             let json = serde_json::to_string(&pi).unwrap();
             let _: EpsilonDecayGreedy = serde_json::from_str(&json).unwrap();

@@ -47,12 +47,6 @@ impl EpsilonDecayGreedy {
     }
 }
 
-impl Default for EpsilonDecayGreedy {
-    fn default() -> Self {
-        Self::new(0.1, 0.999, 0.01)
-    }
-}
-
 impl Display for EpsilonDecayGreedy {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(

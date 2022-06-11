@@ -9,16 +9,16 @@ use crate::{
 };
 
 /// Definition of a generic agent.
-pub trait Agent<A, R, S, P, V>: Clone + Debug + Display
+pub trait Agent<A, R, S, V, P>: Clone + Debug + Display
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
     /// Constructs an agent given a policy and a (state-)action value function.
-    fn new(pi: P, v: V) -> Self;
+    fn new(v: V, pi: P) -> Self;
 
     /// Iterates of the action space.
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
@@ -35,5 +35,5 @@ where
     fn reset(&mut self) -> &mut Self;
 
     /// Updates the agent given performed action, obtained reward, next state and end-of-episode flag.
-    fn update(&mut self, action: A, reward: R, state: S, is_done: bool);
+    fn update(&mut self, action: A, reward: R, next_state: S, is_done: bool);
 }

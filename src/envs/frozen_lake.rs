@@ -91,7 +91,7 @@ impl<const N: usize, const S: bool> FrozenLake<N, S> {
     const fn update_probability_matrix(row: usize, col: usize, action: usize) -> (f64, usize, bool) {
         let (new_row, new_col) = Self::inc(row, col, action);
         let new_state = Self::to_s(new_row, new_col);
-        let new_char = Self::MAP.as_bytes()[new_row * Self::COLS + new_col];
+        let new_char = Self::MAP.as_bytes()[new_state];
         let done = new_char == b'G' || new_char == b'H';
         let reward = (new_char == b'G') as u8 as f64;
 
@@ -121,7 +121,7 @@ impl<const N: usize, const S: bool> FrozenLake<N, S> {
             for col in 0..Self::COLS {
                 let s = Self::to_s(row, col);
                 for a in 0..Self::ACTIONS {
-                    let char = Self::MAP.as_bytes()[row * Self::COLS + col];
+                    let char = Self::MAP.as_bytes()[s];
                     if char == b'G' || char == b'H' {
                         probability_matrix[(s, a)] = 1.;
                         transition_matrix[(s, a)] = s;
@@ -131,11 +131,16 @@ impl<const N: usize, const S: bool> FrozenLake<N, S> {
                         // If is slippery ...
                         if S {
                             // ... assign each action a 1/(ACTIONS-1) probability ...
-                            let mut p = Array1::<f64>::from_elem((Self::ACTIONS,), 1. / (Self::ACTIONS - 1) as f64);
-                            // ... setting the "non-perpendicular"/opposed action to 0 ...
-                            p[(a + 2) % Self::ACTIONS] = 0.;
-                            // ... for the current state.
-                            probability_matrix.row_mut(s).assign(&p);
+                            for b in 0..Self::ACTIONS {
+                                // ... except the "non-perpendicular"/opposed action ...
+                                if b != (a + 2) % Self::ACTIONS {
+                                    let (reward, next_state, done) = Self::update_probability_matrix(row, col, b);
+                                    probability_matrix[(s, b)] = 1. / (Self::ACTIONS - 1) as f64;
+                                    transition_matrix[(s, b)] = next_state;
+                                    reward_matrix[(s, b)] = reward;
+                                    is_terminal[(s, b)] = done;
+                                }
+                            }
                         } else {
                             let (reward, next_state, done) = Self::update_probability_matrix(row, col, a);
                             probability_matrix[(s, a)] = 1.;

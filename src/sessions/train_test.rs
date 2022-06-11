@@ -35,7 +35,7 @@ impl Session for TrainTest {
         self.repeat * self.train
     }
 
-    fn call_with_bar<A, R, S, P, V, G, E, T>(
+    fn call_with_bar<A, R, S, V, P, G, E, T>(
         &self,
         agent: &mut G,
         environment: &mut E,
@@ -48,7 +48,7 @@ impl Session for TrainTest {
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        G: Agent<A, R, S, P, V>,
+        G: Agent<A, R, S, V, P>,
         E: Env<A, R, S>,
         T: Rng + ?Sized,
     {

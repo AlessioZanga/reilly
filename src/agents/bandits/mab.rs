@@ -55,7 +55,7 @@ where
     /// Constructs a sequence of arms given the (action, arm) pairs.
     pub fn new<I>(actions_arms_iter: I) -> Self
     where
-        I: Iterator<Item = (A, V)>,
+        I: ExactSizeIterator<Item = (A, V)>,
     {
         let arms = actions_arms_iter.collect();
 
@@ -176,13 +176,13 @@ pub type UCB1NormalArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1_NORMAL }
 
 /// (Contextual) multi armed bandit agent (MAB).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct MultiArmedBandit<A, R, S, P, V>
+pub struct MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
     #[serde(default, skip_serializing)]
     _a: PhantomData<A>,
@@ -190,32 +190,32 @@ where
     _r: PhantomData<R>,
     #[serde(default, skip_serializing)]
     _s: PhantomData<S>,
-    pi: P,
     v: V,
+    pi: P,
 }
 
-impl<A, R, S, P, V> Display for MultiArmedBandit<A, R, S, P, V>
+impl<A, R, S, V, P> Display for MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}-{}-MAB", self.pi, self.v)
     }
 }
 
-impl<A, R, S, P, V> Agent<A, R, S, P, V> for MultiArmedBandit<A, R, S, P, V>
+impl<A, R, S, V, P> Agent<A, R, S, V, P> for MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
-    fn new(pi: P, v: V) -> Self
+    fn new(v: V, pi: P) -> Self
     where
         P: Policy,
         V: StateActionValue<A, R, S>,
@@ -224,8 +224,8 @@ where
             _a: PhantomData,
             _r: PhantomData,
             _s: PhantomData,
-            pi,
             v,
+            pi,
         }
     }
 
@@ -254,9 +254,9 @@ where
         self
     }
 
-    fn update(&mut self, action: A, reward: R, state: S, is_done: bool) {
+    fn update(&mut self, action: A, reward: R, next_state: S, is_done: bool) {
         // Update the (state-)action value function.
-        self.v.update(action, reward, state, is_done);
+        self.v.update(action, reward, next_state, is_done);
         // Update the policy.
         self.pi.update(is_done);
     }

@@ -19,14 +19,14 @@ pub trait Session: Clone + Debug {
     fn get_total_episodes(&self) -> usize;
 
     /// Execute the experiment session.
-    fn call<A, R, S, P, V, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
+    fn call<A, R, S, V, P, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where
         A: Action,
         R: Reward,
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        G: Agent<A, R, S, P, V>,
+        G: Agent<A, R, S, V, P>,
         E: Env<A, R, S>,
         T: Rng + ?Sized,
     {
@@ -34,7 +34,7 @@ pub trait Session: Clone + Debug {
     }
 
     /// Execute the experiment session with a preallocated progress bar.
-    fn call_with_bar<A, R, S, P, V, G, E, T>(
+    fn call_with_bar<A, R, S, V, P, G, E, T>(
         &self,
         agent: &mut G,
         environment: &mut E,
@@ -47,12 +47,12 @@ pub trait Session: Clone + Debug {
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        G: Agent<A, R, S, P, V>,
+        G: Agent<A, R, S, V, P>,
         E: Env<A, R, S>,
         T: Rng + ?Sized;
 
     /// Execute the experiment session in parallel.
-    fn par_call<'a, A, R, S, P, V, G, E, T, I>(&self, iter: I, rng: &mut T) -> DataFrame
+    fn par_call<'a, A, R, S, V, P, G, E, T, I>(&self, iter: I, rng: &mut T) -> DataFrame
     where
         Self: Sync,
         A: Action,
@@ -60,7 +60,7 @@ pub trait Session: Clone + Debug {
         S: State,
         P: Policy,
         V: StateActionValue<A, R, S>,
-        G: Agent<A, R, S, P, V> + 'a,
+        G: Agent<A, R, S, V, P> + 'a,
         E: Env<A, R, S> + 'a,
         T: Rng + SeedableRng + ?Sized,
         I: IndexedParallelIterator<Item = &'a mut (G, E)>,
