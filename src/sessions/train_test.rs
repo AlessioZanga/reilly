@@ -79,6 +79,8 @@ impl Session for TrainTest {
         progress.set_style(ProgressStyle::default_bar().template(
             "{spinner} {msg}... ({percent}%) {wide_bar} [{pos}/{len}][{elapsed_precise}/{eta_precise}][{per_sec}]",
         ));
+        // Print progress layout.
+        progress.tick();
         // For each fold ...
         for i in 0..self.repeat {
             // ... perform n train episodes, then ...

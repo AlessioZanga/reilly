@@ -1,5 +1,10 @@
-use std::fmt::{Display, Formatter};
+use std::{
+    fmt::{Display, Formatter},
+    thread::sleep,
+    time::Duration,
+};
 
+use console::{style, Term};
 use ndarray::prelude::*;
 use rand_distr::{Distribution, WeightedIndex};
 use serde::{Deserialize, Serialize};
@@ -8,7 +13,7 @@ use super::Env;
 
 /// Port of `FrozenLake-v1` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/0263deb5ab8dce46b1056f5baa2c7c141fad9471/gym/envs/toy_text/frozen_lake.py).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct FrozenLake<const N: usize, const S: bool> {
+pub struct FrozenLake<const N: usize, const S: bool, const D: bool> {
     state: usize,
     p_states_0: Array1<f64>,
     probability_matrix: Array2<f64>,
@@ -17,7 +22,7 @@ pub struct FrozenLake<const N: usize, const S: bool> {
     is_terminal: Array2<bool>,
 }
 
-impl<const N: usize, const S: bool> FrozenLake<N, S> {
+impl<const N: usize, const S: bool, const D: bool> FrozenLake<N, S, D> {
     /// Textual representation of the environment map.
     #[rustfmt::skip]
     pub const MAP: &'static str = match N {
@@ -162,21 +167,52 @@ impl<const N: usize, const S: bool> FrozenLake<N, S> {
             is_terminal,
         }
     }
+
+    /// Renders the environment in a text-based mod.
+    pub fn render(&self) -> std::io::Result<()> {
+        // Get terminal handle.
+        let terminal = Term::stdout();
+        // Disable cursor highlighting.
+        terminal.hide_cursor()?;
+        // Print environment.
+        for row in 0..Self::ROWS {
+            let text = &Self::MAP[(row * Self::COLS)..((row + 1) * Self::COLS)];
+            let text = text
+                .chars()
+                .enumerate()
+                .map(|(col, char)| {
+                    if row * Self::COLS + col == self.state {
+                        format!("{}", style(char).on_red())
+                    } else {
+                        format!("{}", char)
+                    }
+                })
+                .collect::<Vec<String>>()
+                .join("");
+            terminal.write_line(&text)?;
+        }
+        // Reset cursor.
+        terminal.move_cursor_up(Self::ROWS)?;
+        // Sleep for 20 milliseconds, i.e. set speed at 50 FPS.
+        sleep(Duration::from_millis(1000 / 50));
+
+        Ok(())
+    }
 }
 
-impl<const N: usize, const S: bool> Default for FrozenLake<N, S> {
+impl<const N: usize, const S: bool, const D: bool> Default for FrozenLake<N, S, D> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<const N: usize, const S: bool> Display for FrozenLake<N, S> {
+impl<const N: usize, const S: bool, const D: bool> Display for FrozenLake<N, S, D> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "FrozenLake-{}x{}{}-v1", N, N, if S { "-Slippery" } else { "" })
     }
 }
 
-impl<const N: usize, const S: bool> Env<usize, f64, usize> for FrozenLake<N, S> {
+impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for FrozenLake<N, S, D> {
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = usize> + 'a> {
         Box::new(0..Self::ACTIONS)
     }
@@ -211,6 +247,11 @@ impl<const N: usize, const S: bool> Env<usize, f64, usize> for FrozenLake<N, S> 
         let done = self.is_terminal[idx];
         // Update current state.
         self.state = next_state;
+        // If display is set ...
+        if D {
+            // ... render current state.
+            self.render().expect("Unable to render current environment state");
+        }
 
         (reward, next_state, done)
     }
@@ -229,11 +270,19 @@ impl<const N: usize, const S: bool> Env<usize, f64, usize> for FrozenLake<N, S> 
     }
 }
 
-/// `FrozenLake-v1` with 4x4 map and no slippery.
-pub type FrozenLake4x4 = FrozenLake<4, false>;
-/// `FrozenLake-v1` with 8x8 map and no slippery.
-pub type FrozenLake8x8 = FrozenLake<8, false>;
-/// `FrozenLake-v1` with 4x4 map and slippery.
-pub type FrozenLake4x4Slippery = FrozenLake<4, true>;
-/// `FrozenLake-v1` with 8x8 map and slippery.
-pub type FrozenLake8x8Slippery = FrozenLake<8, true>;
+/// `FrozenLake-v1` with 4x4 map, no slippery and no display.
+pub type FrozenLake4x4 = FrozenLake<4, false, false>;
+/// `FrozenLake-v1` with 8x8 map, no slippery and no display.
+pub type FrozenLake8x8 = FrozenLake<8, false, false>;
+/// `FrozenLake-v1` with 4x4 map, slippery and no display.
+pub type FrozenLake4x4Slippery = FrozenLake<4, true, false>;
+/// `FrozenLake-v1` with 8x8 map, slippery and no display.
+pub type FrozenLake8x8Slippery = FrozenLake<8, true, false>;
+/// `FrozenLake-v1` with 4x4 map, no slippery and display.
+pub type FrozenLake4x4WithDisplay = FrozenLake<4, false, true>;
+/// `FrozenLake-v1` with 8x8 map, no slippery and display.
+pub type FrozenLake8x8WithDisplay = FrozenLake<8, false, true>;
+/// `FrozenLake-v1` with 4x4 map, slippery and display.
+pub type FrozenLake4x4SlipperyWithDisplay = FrozenLake<4, true, true>;
+/// `FrozenLake-v1` with 8x8 map, slippery and display.
+pub type FrozenLake8x8SlipperyWithDisplay = FrozenLake<8, true, true>;

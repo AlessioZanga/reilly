@@ -73,7 +73,7 @@ mod sessions {
                 use rand_xoshiro::Xoshiro256PlusPlus;
                 use reilly::{
                     agents::{
-                        montecarlo::{EveryVisit, MonteCarlo, FirstVisit},
+                        montecarlo::{EveryVisit, FirstVisit, MonteCarlo},
                         Agent,
                     },
                     envs::{Env, FrozenLake4x4},
