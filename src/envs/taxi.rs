@@ -272,6 +272,7 @@ impl<const D: bool> Env<usize, f64, usize> for Taxi<D> {
         let done = self.is_terminal[idx];
         // Update current state.
         self.state = next_state;
+
         // If display is set, render current state.
         if D {
             self.render().expect("Unable to render current environment state");
