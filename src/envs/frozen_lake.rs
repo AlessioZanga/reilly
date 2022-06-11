@@ -193,6 +193,8 @@ impl<const N: usize, const S: bool, const D: bool> FrozenLake<N, S, D> {
         }
         // Reset cursor.
         terminal.move_cursor_up(Self::ROWS)?;
+        // Enable cursor highlighting.
+        terminal.show_cursor()?;
         // Sleep for 20 milliseconds, i.e. set speed at 50 FPS.
         sleep(Duration::from_millis(1000 / 50));
 
@@ -247,9 +249,8 @@ impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for Fr
         let done = self.is_terminal[idx];
         // Update current state.
         self.state = next_state;
-        // If display is set ...
+        // If display is set, render current state.
         if D {
-            // ... render current state.
             self.render().expect("Unable to render current environment state");
         }
 

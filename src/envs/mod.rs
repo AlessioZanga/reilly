@@ -8,4 +8,4 @@ mod frozen_lake;
 pub use frozen_lake::*;
 
 mod taxi;
-pub use taxi::Taxi;
+pub use taxi::{TaxiNoDisplay as Taxi, TaxiWithDisplay};

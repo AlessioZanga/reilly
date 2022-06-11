@@ -76,7 +76,7 @@ mod sessions {
                         montecarlo::{EveryVisit, FirstVisit, MonteCarlo},
                         Agent,
                     },
-                    envs::{Env, FrozenLake4x4},
+                    envs::{Env, FrozenLake4x4, TaxiWithDisplay},
                     policies::EpsilonGreedy,
                     sessions::{Session, TrainTest},
                 };
@@ -105,7 +105,7 @@ mod sessions {
                     // Initialize the random number generator.
                     let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
                     // Initialize the environment.
-                    let mut env = FrozenLake4x4::new();
+                    let mut env = TaxiWithDisplay::new();
                     // Initialize the agent.
                     let mut agent = MonteCarlo::new(
                         EveryVisit::new(env.actions_iter(), env.states_iter(), 0.9),
