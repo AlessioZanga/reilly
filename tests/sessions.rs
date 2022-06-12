@@ -76,8 +76,8 @@ mod sessions {
                         montecarlo::{EveryVisit, FirstVisit, MonteCarlo},
                         Agent,
                     },
-                    envs::{Env, FrozenLake4x4, TaxiWithDisplay},
-                    policies::EpsilonGreedy,
+                    envs::{Env, FrozenLake4x4},
+                    policies::{EpsilonDecayGreedy, EpsilonGreedy},
                     sessions::{Session, TrainTest},
                 };
 
@@ -105,14 +105,14 @@ mod sessions {
                     // Initialize the random number generator.
                     let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
                     // Initialize the environment.
-                    let mut env = TaxiWithDisplay::new();
+                    let mut env = FrozenLake4x4::new();
                     // Initialize the agent.
                     let mut agent = MonteCarlo::new(
                         EveryVisit::new(env.actions_iter(), env.states_iter(), 0.9),
-                        EpsilonGreedy::new(0.4),
+                        EpsilonDecayGreedy::new(0.99, 0.9999, 0.01),
                     );
-                    // Execute the experiment session.
-                    let session = TrainTest::new(100, 10, 300);
+                    // Execute the experiment session with maximum number of steps per episode set to 500.
+                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-every_visit.csv").unwrap();

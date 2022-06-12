@@ -21,12 +21,25 @@ pub struct TrainTest {
     train: usize,
     test: usize,
     repeat: usize,
+    steps_max: usize,
 }
 
 impl TrainTest {
     /// Constructs a train-test session.
     pub fn new(train: usize, test: usize, repeat: usize) -> Self {
-        Self { train, test, repeat }
+        Self {
+            train,
+            test,
+            repeat,
+            steps_max: usize::MAX,
+        }
+    }
+
+    /// Sets the max number of steps for each episode.
+    pub fn with_steps_max(mut self, steps_max: usize) -> Self {
+        self.steps_max = steps_max;
+
+        self
     }
 }
 
@@ -91,39 +104,51 @@ impl Session for TrainTest {
                 let mut state = environment.reset(rng).get_state();
                 // Set is_done flag to false.
                 let mut is_done = false;
+                // Set the steps counter.
+                let mut steps = 1;
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
                     let action = agent.call(state, rng);
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(action.clone(), rng);
-                    // ... update the agent.
+                    // ... check if max number of steps is reached ...
+                    is_done |= steps >= self.steps_max;
+                    // ... update the agent ...
                     agent.update(action, reward, state.clone(), is_done);
+                    // ... increment the steps counter.
+                    steps += 1;
                 }
                 // Update progress.
                 progress.inc(1);
             }
             // ... perform m test episodes.
             for j in 0..self.test {
+                // Declare reward.
+                let mut reward;
                 // Reset the environment and get its initial state.
                 let mut state = environment.reset(rng).get_state();
                 // Set is_done flag to false.
                 let mut is_done = false;
                 // Init the cumulative reward.
-                let mut cum_reward = 0.;
-                // Declare reward.
-                let mut reward;
+                let mut cum_reward = R::zero();
+                // Set the steps counter.
+                let mut steps = 1;
                 // While the episode is not over ...
                 while !is_done {
                     // ... get the action for the current state ...
                     let action = agent.call(state, rng);
                     // ... perform the action ...
                     (reward, state, is_done) = environment.call_mut(action, rng);
-                    // ... update the cumulative reward.
-                    cum_reward += reward.to_f64().unwrap();
+                    // ... update the cumulative reward ...
+                    cum_reward = cum_reward + reward;
+                    // ... check if max number of steps is reached.
+                    is_done |= steps >= self.steps_max;
+                    // ... increment the steps counter.
+                    steps += 1;
                 }
                 // Record the cumulative reward.
-                rewd.push(cum_reward);
+                rewd.push(cum_reward.to_f64().unwrap());
                 test.push(j as u64);
                 reps.push(i as u64);
             }
