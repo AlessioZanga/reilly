@@ -55,7 +55,7 @@ where
     /// Constructs a sequence of arms given the (action, arm) pairs.
     pub fn new<I>(actions_arms_iter: I) -> Self
     where
-        I: Iterator<Item = (A, V)>,
+        I: ExactSizeIterator<Item = (A, V)>,
     {
         let arms = actions_arms_iter.collect();
 
@@ -116,7 +116,7 @@ where
             ArmsAlgorithm::UCB_1 => {
                 // Cast t and n.
                 let t = R::from(self.count).unwrap();
-                let n = R::from(a.get_count()).unwrap();
+                let n = R::from(a.count()).unwrap();
 
                 a.call() + R::sqrt(R::from(2.).unwrap() * R::ln(t) / n)
             }
@@ -125,11 +125,11 @@ where
             ArmsAlgorithm::UCB_1_NORMAL => {
                 // Cast t and n.
                 let t = R::from(self.count).unwrap();
-                let n = R::from(a.get_count()).unwrap();
+                let n = R::from(a.count()).unwrap();
 
                 // Compute Q(a) and Q(n).
                 let q_a = a.call();
-                let q_n = a.get_sum_squared_rewards();
+                let q_n = a.sum_squared_rewards();
 
                 q_a + R::sqrt(
                     // Constant.
@@ -146,11 +146,6 @@ where
     }
 
     fn reset(&mut self) -> &mut Self {
-        // Reset each arm.
-        self.arms.iter_mut().for_each(|(_, arm)| arm.reset());
-        // Reset the counter.
-        self.count = 0;
-
         self
     }
 
@@ -176,13 +171,13 @@ pub type UCB1NormalArms<A, R, V> = Arms<A, R, V, { ArmsAlgorithm::UCB_1_NORMAL }
 
 /// (Contextual) multi armed bandit agent (MAB).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct MultiArmedBandit<A, R, S, P, V>
+pub struct MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
     #[serde(default, skip_serializing)]
     _a: PhantomData<A>,
@@ -190,32 +185,32 @@ where
     _r: PhantomData<R>,
     #[serde(default, skip_serializing)]
     _s: PhantomData<S>,
-    pi: P,
     v: V,
+    pi: P,
 }
 
-impl<A, R, S, P, V> Display for MultiArmedBandit<A, R, S, P, V>
+impl<A, R, S, V, P> Display for MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}-{}-MAB", self.pi, self.v)
     }
 }
 
-impl<A, R, S, P, V> Agent<A, R, S, P, V> for MultiArmedBandit<A, R, S, P, V>
+impl<A, R, S, V, P> Agent<A, R, S, V, P> for MultiArmedBandit<A, R, S, V, P>
 where
     A: Action,
     R: Reward,
     S: State,
-    P: Policy,
     V: StateActionValue<A, R, S>,
+    P: Policy,
 {
-    fn new(pi: P, v: V) -> Self
+    fn new(v: V, pi: P) -> Self
     where
         P: Policy,
         V: StateActionValue<A, R, S>,
@@ -224,9 +219,17 @@ where
             _a: PhantomData,
             _r: PhantomData,
             _s: PhantomData,
-            pi,
             v,
+            pi,
         }
+    }
+
+    fn value(&self) -> &V {
+        &self.v
+    }
+
+    fn policy(&self) -> &P {
+        &self.pi
     }
 
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
@@ -245,18 +248,16 @@ where
         self.pi.call(&self.v, state, rng)
     }
 
-    fn reset(&mut self) -> &mut Self {
-        // Reset the (state-)action value function.
-        self.v.reset();
-        // Reset the policy.
-        self.pi.reset();
+    fn reset(&mut self, state: S) -> &mut Self {
+        // Reset the (state-)action value function to the given initial state.
+        self.v.reset(state);
 
         self
     }
 
-    fn update(&mut self, action: A, reward: R, state: S, is_done: bool) {
+    fn update(&mut self, action: A, reward: R, next_state: S, is_done: bool) {
         // Update the (state-)action value function.
-        self.v.update(action, reward, state, is_done);
+        self.v.update(action, reward, next_state, is_done);
         // Update the policy.
         self.pi.update(is_done);
     }

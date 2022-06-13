@@ -39,7 +39,5 @@ impl Policy for Random {
         f.actions_iter().choose(rng).expect("Unable to choose an action")
     }
 
-    fn reset(&mut self) {}
-
     fn update(&mut self, _is_done: bool) {}
 }

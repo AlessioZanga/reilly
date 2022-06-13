@@ -11,14 +11,14 @@ mod envs {
         fn actions_iter() {
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let env = FarWest::new(env, 1_000);
+            let env = FarWest::new(env);
 
             assert_eq!(
                 BTreeSet::from_iter(env.actions_iter()),
@@ -30,32 +30,32 @@ mod envs {
         fn states_iter() {
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let env = FarWest::new(env, 1_000);
+            let env = FarWest::new(env);
 
             assert!(env.states_iter().eq([()].into_iter()));
         }
 
         #[test]
-        fn get_state() {
+        fn state() {
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let env = FarWest::new(env, 1_000);
+            let env = FarWest::new(env);
 
-            env.get_state();
+            env.state();
         }
 
         #[test]
@@ -65,14 +65,14 @@ mod envs {
             // Initialize the env.
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let mut env = FarWest::new(env, 1_000);
+            let mut env = FarWest::new(env);
 
             env.call_mut(0, &mut rng);
         }
@@ -83,14 +83,14 @@ mod envs {
 
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let mut env = FarWest::new(env, 1_000);
+            let mut env = FarWest::new(env);
 
             env.reset(&mut rng);
         }
@@ -101,14 +101,14 @@ mod envs {
         fn serialize() {
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let _env = FarWest::new(env, 1_000);
+            let _env = FarWest::new(env);
 
             // FIXME: serde_json::to_string(&env).unwrap();
         }
@@ -119,14 +119,14 @@ mod envs {
         fn deserialize() {
             let env = [
                 Normal::new(0., 1.),
-                Normal::new(5., 2.),
-                Normal::new(1., 6.),
-                Normal::new(9., 4.),
-                Normal::new(7., 3.),
+                Normal::new(5., 1.),
+                Normal::new(1., 1.),
+                Normal::new(9., 1.),
+                Normal::new(7., 1.),
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let _env = FarWest::new(env, 1_000);
+            let _env = FarWest::new(env);
 
             // FIXME: let json = serde_json::to_string(&env).unwrap();
             // FIXME: let _: FarWest<Normal<f64>> = serde_json::from_str(&json).unwrap();
@@ -161,10 +161,10 @@ mod envs {
         }
 
         #[test]
-        fn get_state() {
+        fn state() {
             let env = Taxi::new();
 
-            assert_eq!(env.get_state(), 0);
+            assert_eq!(env.state(), 0);
         }
 
         #[test]
@@ -227,10 +227,10 @@ mod envs {
         }
 
         #[test]
-        fn get_state() {
+        fn state() {
             let env = FrozenLake4x4::new();
 
-            assert_eq!(env.get_state(), 0);
+            assert_eq!(env.state(), 0);
         }
 
         #[test]
@@ -293,10 +293,10 @@ mod envs {
         }
 
         #[test]
-        fn get_state() {
+        fn state() {
             let env = FrozenLake4x4Slippery::new();
 
-            assert_eq!(env.get_state(), 0);
+            assert_eq!(env.state(), 0);
         }
 
         #[test]

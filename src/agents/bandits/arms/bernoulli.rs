@@ -32,24 +32,17 @@ impl Bernoulli {
 }
 
 impl Arm<f64> for Bernoulli {
-    fn get_count(&self) -> usize {
+    fn count(&self) -> usize {
         self.count
     }
 
-    fn get_sum_squared_rewards(&self) -> f64 {
+    fn sum_squared_rewards(&self) -> f64 {
         self.srewd
     }
 
     fn call(&self) -> f64 {
         // Compute the expected reward.
         self.alpha / (self.alpha + self.beta)
-    }
-
-    fn reset(&mut self) {
-        self.count = 0;
-        self.srewd = 0.;
-        self.alpha = self.alpha_0;
-        self.beta = self.beta_0;
     }
 
     fn sample<T: Rng + ?Sized>(&self, rng: &mut T) -> f64 {

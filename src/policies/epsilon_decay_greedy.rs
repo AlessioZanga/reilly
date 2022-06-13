@@ -47,12 +47,6 @@ impl EpsilonDecayGreedy {
     }
 }
 
-impl Default for EpsilonDecayGreedy {
-    fn default() -> Self {
-        Self::new(0.1, 0.999, 0.01)
-    }
-}
-
 impl Display for EpsilonDecayGreedy {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -75,20 +69,13 @@ impl Policy for EpsilonDecayGreedy {
         // Sample probability.
         let p = Uniform::new(0., 1.).sample(rng);
         // With probability (1 - epsilon) ...
-        match p < (1. - self.epsilon) {
+        if p < (1. - self.epsilon) {
             // ... select an action greedily, otherwise ...
-            false => self.greedy.call(f, state, rng),
+            self.greedy.call(f, state, rng)
+        } else {
             // ... select a random action form the action space.
-            true => self.random.call(f, state, rng),
+            self.random.call(f, state, rng)
         }
-    }
-
-    fn reset(&mut self) {
-        // Reset epsilon.
-        self.epsilon = self.epsilon_0;
-        // Reset helper policies.
-        self.greedy.reset();
-        self.random.reset();
     }
 
     fn update(&mut self, is_done: bool) {

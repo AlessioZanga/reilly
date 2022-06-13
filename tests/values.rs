@@ -34,7 +34,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let arms = ExpectedValueArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -42,7 +42,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let mut arms = ExpectedValueArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -104,7 +104,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let arms = ExpectedValueArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -112,7 +112,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let mut arms = ExpectedValueArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -176,7 +176,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let arms = ThompsonSamplingArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -184,7 +184,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let mut arms = ThompsonSamplingArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -246,7 +246,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let arms = ThompsonSamplingArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -254,7 +254,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let mut arms = ThompsonSamplingArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -318,7 +318,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let arms = UCB1Arms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -326,7 +326,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let mut arms = UCB1Arms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -388,7 +388,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let arms = UCB1Arms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -396,7 +396,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let mut arms = UCB1Arms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -460,7 +460,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let arms = UCB1NormalArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -468,7 +468,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Bernoulli::new(1., 1.)));
                     let mut arms = UCB1NormalArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]
@@ -530,7 +530,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let arms = UCB1NormalArms::new(arms);
 
-                    arms.call(0, (), &mut rng);
+                    arms.call((), 0, &mut rng);
                 }
 
                 #[test]
@@ -538,7 +538,7 @@ mod values {
                     let arms = (0..5).map(|a| (a, Normal::new()));
                     let mut arms = UCB1NormalArms::new(arms);
 
-                    arms.reset();
+                    arms.reset(());
                 }
 
                 #[test]

@@ -1,5 +1,10 @@
-use std::fmt::{Display, Formatter};
+use std::{
+    fmt::{Display, Formatter},
+    thread::sleep,
+    time::Duration,
+};
 
+use console::{style, Term};
 use ndarray::prelude::*;
 use rand_distr::{Distribution, WeightedIndex};
 use serde::{Deserialize, Serialize};
@@ -8,7 +13,7 @@ use super::Env;
 
 /// Port of `Taxi-v3` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/b704d4660e45edc7bb674a6c971d376990d340dc/gym/envs/toy_text/taxi.py).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Taxi {
+pub struct Taxi<const D: bool> {
     state: usize,
     p_states_0: Array1<f64>,
     transition_matrix: Array2<usize>,
@@ -16,7 +21,7 @@ pub struct Taxi {
     is_terminal: Array2<bool>,
 }
 
-impl Taxi {
+impl<const D: bool> Taxi<D> {
     /// Textual representation of the environment map.
     pub const MAP: &'static str = concat!(
         "+---------+",
@@ -58,19 +63,15 @@ impl Taxi {
         i
     }
 
-    /*
-    def decode(self, i):
-        out = []
-        out.append(i % 4)
-        i = i // 4
-        out.append(i % 5)
-        i = i // 5
-        out.append(i % 5)
-        i = i // 5
-        out.append(i)
-        assert 0 <= i < 5
-        return reversed(out)
-    */
+    fn decode(i: usize) -> (usize, usize, usize, usize) {
+        let (dest_idx, i) = (i % Self::LOCS.len(), i / Self::LOCS.len());
+        let (pass_idx, i) = (i % Self::COLS, i / Self::COLS);
+        let (taxi_col, i) = (i % Self::ROWS, i / Self::ROWS);
+        let taxi_row = i;
+        assert!(i < 5);
+
+        (taxi_row, taxi_col, pass_idx, dest_idx)
+    }
 
     /// Constructs a `Taxi-v3` environment.
     pub fn new() -> Self {
@@ -180,21 +181,73 @@ impl Taxi {
             is_terminal,
         }
     }
+
+    /// Renders the environment in a text-based mod.
+    pub fn render(&self) -> std::io::Result<()> {
+        // Decode current state ...
+        let (taxi_row, taxi_col, pass_idx, dest_idx) = Self::decode(self.state);
+        // ... and current passenger location (when not in the taxi) ...
+        let (pass_row, pass_col) = Self::LOCS[pass_idx % Self::LOCS.len()];
+        // ... and current passenger destination.
+        let (dest_row, dest_col) = Self::LOCS[dest_idx];
+        // Get terminal handle.
+        let terminal = Term::stdout();
+        // Disable cursor highlighting.
+        terminal.hide_cursor()?;
+        // Print environment.
+        for row in 0..(Self::ROWS + 2) {
+            let text = &Self::MAP[(row * (2 * Self::COLS + 1))..((row + 1) * (2 * Self::COLS + 1))];
+            let text = text
+                .chars()
+                .enumerate()
+                .map(|(col, char)| {
+                    // Draw the taxi ...
+                    if row == (1 + taxi_row) && col == (2 * taxi_col + 1) {
+                        if pass_idx < 4 {
+                            // ... without the passenger.
+                            format!("{}", style(char).on_yellow())
+                        } else {
+                            // ... with the passenger.
+                            format!("{}", style(char).on_green())
+                        }
+                    // Draw the passenger (when not in the taxi).
+                    } else if row == (1 + pass_row) && col == (2 * pass_col + 1) && pass_idx < 4 {
+                        format!("{}", style(char).on_blue())
+                    // Draw the destination of the passenger.
+                    } else if row == (1 + dest_row) && col == (2 * dest_col + 1) {
+                        format!("{}", style(char).on_magenta())
+                    } else {
+                        format!("{}", char)
+                    }
+                })
+                .collect::<Vec<String>>()
+                .join("");
+            terminal.write_line(&text)?;
+        }
+        // Reset cursor.
+        terminal.move_cursor_up(Self::ROWS + 2)?;
+        // Enable cursor highlighting.
+        terminal.show_cursor()?;
+        // Sleep for 20 milliseconds, i.e. set speed at 50 FPS.
+        sleep(Duration::from_millis(1000 / 50));
+
+        Ok(())
+    }
 }
 
-impl Default for Taxi {
+impl<const D: bool> Default for Taxi<D> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Display for Taxi {
+impl<const D: bool> Display for Taxi<D> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "Taxi-v3")
     }
 }
 
-impl Env<usize, f64, usize> for Taxi {
+impl<const D: bool> Env<usize, f64, usize> for Taxi<D> {
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = usize> + 'a> {
         Box::new(0..Self::ACTIONS)
     }
@@ -203,7 +256,7 @@ impl Env<usize, f64, usize> for Taxi {
         Box::new(0..Self::STATES)
     }
 
-    fn get_state(&self) -> usize {
+    fn state(&self) -> usize {
         self.state
     }
 
@@ -219,6 +272,11 @@ impl Env<usize, f64, usize> for Taxi {
         let done = self.is_terminal[idx];
         // Update current state.
         self.state = next_state;
+
+        // If display is set, render current state.
+        if D {
+            self.render().expect("Unable to render current environment state");
+        }
 
         (reward, next_state, done)
     }
@@ -236,3 +294,8 @@ impl Env<usize, f64, usize> for Taxi {
         self
     }
 }
+
+/// `Taxi-v3` with no display.
+pub type TaxiNoDisplay = Taxi<false>;
+/// `Taxi-v3` with display.
+pub type TaxiWithDisplay = Taxi<true>;

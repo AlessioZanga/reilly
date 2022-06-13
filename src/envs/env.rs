@@ -18,7 +18,7 @@ where
     fn states_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = S> + 'a>;
 
     /// Gets current state of the environment.
-    fn get_state(&self) -> S;
+    fn state(&self) -> S;
 
     /// Compute the effect of an action on the environment,
     /// returning the obtained reward, next state and end-of-episode flag.
