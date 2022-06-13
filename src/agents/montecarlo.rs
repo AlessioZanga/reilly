@@ -75,15 +75,13 @@ impl StateActionValue<usize, f64, usize> for FirstVisit<usize, f64, usize> {
         self.q[(state, action)]
     }
 
-    fn reset(&mut self) -> &mut Self {
+    fn reset(&mut self, state: usize) -> &mut Self {
         // Reset current state.
-        self.state = 0;
+        self.state = state;
         // Reset trajectory.
         self.trajectory.clear();
         // Reset counter.
         self.n.fill(0);
-        // Reset Q-function.
-        self.q.fill(0.);
 
         self
     }
@@ -112,10 +110,6 @@ impl StateActionValue<usize, f64, usize> for FirstVisit<usize, f64, usize> {
                     self.q[(s_t, a_t)] += (g - self.q[(s_t, a_t)]) / self.n[(s_t, a_t)] as f64;
                 }
             }
-            // Clear the trajectory.
-            self.trajectory.clear();
-            // Reset the counter.
-            self.n.fill(0);
         }
     }
 }
@@ -182,15 +176,13 @@ impl StateActionValue<usize, f64, usize> for EveryVisit<usize, f64, usize> {
         self.q[(state, action)]
     }
 
-    fn reset(&mut self) -> &mut Self {
+    fn reset(&mut self, state: usize) -> &mut Self {
         // Reset current state.
-        self.state = 0;
+        self.state = state;
         // Reset trajectory.
         self.trajectory.clear();
         // Reset counter.
         self.n.fill(0);
-        // Reset Q-function.
-        self.q.fill(0.);
 
         self
     }
@@ -205,7 +197,7 @@ impl StateActionValue<usize, f64, usize> for EveryVisit<usize, f64, usize> {
             // Compute discounted cumulative gain.
             let mut g = 0.;
             // Iterate from T-1 down to 0.
-            for (s_t, a_t, r_t) in self.trajectory.drain(..).rev() {
+            for &(s_t, a_t, r_t) in self.trajectory.iter().rev() {
                 // G = gamma * G + R_t+1. NOTE: It uses fused multiply-add (FMA) intrinsic.
                 g = self.gamma.mul_add(g, r_t);
                 // Increment the counter.
@@ -213,8 +205,6 @@ impl StateActionValue<usize, f64, usize> for EveryVisit<usize, f64, usize> {
                 // Q(S_t, A_t) = Q(S_t, A_t) + (G - Q(S_t, A_t)) / n_(S_t, A_t)
                 self.q[(s_t, a_t)] += (g - self.q[(s_t, a_t)]) / self.n[(s_t, a_t)] as f64;
             }
-            // Reset the counter.
-            self.n.fill(0);
         }
     }
 }
@@ -280,6 +270,14 @@ where
         }
     }
 
+    fn value(&self) -> &Q {
+        &self.q
+    }
+
+    fn policy(&self) -> &P {
+        &self.pi
+    }
+
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
         self.q.actions_iter()
     }
@@ -296,11 +294,9 @@ where
         self.pi.call(&self.q, state, rng)
     }
 
-    fn reset(&mut self) -> &mut Self {
-        // Reset the Q function.
-        self.q.reset();
-        // Reset the policy.
-        self.pi.reset();
+    fn reset(&mut self, state: S) -> &mut Self {
+        // Reset the Q function to the given initial state.
+        self.q.reset(state);
 
         self
     }

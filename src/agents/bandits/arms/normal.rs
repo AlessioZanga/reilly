@@ -35,11 +35,6 @@ impl Arm<f64> for Normal {
         self.mean
     }
 
-    fn reset(&mut self) {
-        self.count = 0;
-        self.mean = 0.;
-    }
-
     fn sample<T: rand::Rng + ?Sized>(&self, rng: &mut T) -> f64 {
         rand_distr::Normal::new(self.mean, 1. / (self.count as f64 + 1.))
             .expect("Unable to construct sampling distribution")

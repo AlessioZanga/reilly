@@ -18,9 +18,6 @@ pub trait Policy: Clone + Debug + Display {
         V: StateActionValue<A, R, S>,
         T: Rng + ?Sized;
 
-    /// Resets the function.
-    fn reset(&mut self);
-
     /// Updates the policy given performed action, obtained reward, next state and end-of-episode flag.
     fn update(&mut self, is_done: bool);
 }

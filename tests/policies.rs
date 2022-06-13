@@ -44,13 +44,6 @@ mod policies {
         }
 
         #[test]
-        fn reset() {
-            let mut pi = Greedy::new();
-
-            pi.reset();
-        }
-
-        #[test]
         fn update() {
             let mut pi = Greedy::new();
 
@@ -116,13 +109,6 @@ mod policies {
         }
 
         #[test]
-        fn reset() {
-            let mut pi = EpsilonGreedy::new(0.10);
-
-            pi.reset();
-        }
-
-        #[test]
         fn update() {
             let mut pi = EpsilonGreedy::new(0.10);
 
@@ -172,13 +158,6 @@ mod policies {
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, (), &mut rng);
-        }
-
-        #[test]
-        fn reset() {
-            let mut pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
-
-            pi.reset();
         }
 
         #[test]
@@ -264,13 +243,6 @@ mod policies {
             let v = ExpectedValueArms::<usize, f64, Bernoulli>::new([].into_iter());
 
             pi.call(&v, (), &mut rng);
-        }
-
-        #[test]
-        fn reset() {
-            let mut pi = Random::new();
-
-            pi.reset();
         }
 
         #[test]

@@ -85,7 +85,7 @@ mod agents {
                 EpsilonGreedy::new(0.10),
             );
 
-            mab.reset();
+            mab.reset(());
         }
 
         #[test]

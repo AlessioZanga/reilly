@@ -20,6 +20,12 @@ where
     /// Constructs an agent given a policy and a (state-)action value function.
     fn new(v: V, pi: P) -> Self;
 
+    /// Returns a reference to the value function.
+    fn value(&self) -> &V;
+
+    /// Returns a reference to the policy.
+    fn policy(&self) -> &P;
+
     /// Iterates of the action space.
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a>;
 
@@ -31,8 +37,8 @@ where
     where
         T: Rng + ?Sized;
 
-    /// Resets the agent.
-    fn reset(&mut self) -> &mut Self;
+    /// Resets the agent to the given initial state.
+    fn reset(&mut self, state: S) -> &mut Self;
 
     /// Updates the agent given performed action, obtained reward, next state and end-of-episode flag.
     fn update(&mut self, action: A, reward: R, next_state: S, is_done: bool);

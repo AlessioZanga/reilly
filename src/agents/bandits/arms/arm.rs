@@ -18,9 +18,6 @@ where
     /// Gets expected reward.
     fn call(&self) -> R;
 
-    /// Resets the arm.
-    fn reset(&mut self);
-
     /// Sample from underlying distribution with given random number generator.
     fn sample<T: Rng + ?Sized>(&self, rng: &mut T) -> R;
 

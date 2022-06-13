@@ -42,17 +42,13 @@ impl Policy for Greedy {
             // ... for each (action, reward) pair ...
             .reduce(|(a_i, r_i), (a_j, r_j)|
             // ... maximize the expected reward ...
-            match r_i < r_j {
-                false => (a_i, r_i),
-                true => (a_j, r_j),
-            })
+                if r_i > r_j { (a_i, r_i) } else { (a_j, r_j) }
+            )
             // ... and get the associated action ...
             .map(|(a, _)| a)
             // ... or panic if sequence is empty.
             .expect("Unable to choose an action")
     }
-
-    fn reset(&mut self) {}
 
     fn update(&mut self, _is_done: bool) {}
 }

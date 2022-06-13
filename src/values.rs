@@ -44,7 +44,7 @@ where
         T: Rng + ?Sized;
 
     /// Resets the function.
-    fn reset(&mut self) -> &mut Self;
+    fn reset(&mut self, state: S) -> &mut Self;
 
     /// Updates the state-value function given performed action, obtained reward, next state and end-of-episode flag.
     fn update(&mut self, action: A, reward: R, next_state: S, is_done: bool);
@@ -74,7 +74,7 @@ where
         self.call(action, rng)
     }
 
-    fn reset(&mut self) -> &mut Self {
+    fn reset(&mut self, _state: ()) -> &mut Self {
         self.reset()
     }
 

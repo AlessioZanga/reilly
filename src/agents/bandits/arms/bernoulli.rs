@@ -45,13 +45,6 @@ impl Arm<f64> for Bernoulli {
         self.alpha / (self.alpha + self.beta)
     }
 
-    fn reset(&mut self) {
-        self.count = 0;
-        self.srewd = 0.;
-        self.alpha = self.alpha_0;
-        self.beta = self.beta_0;
-    }
-
     fn sample<T: Rng + ?Sized>(&self, rng: &mut T) -> f64 {
         // Sample from given distribution.
         Beta::new(self.alpha, self.beta)

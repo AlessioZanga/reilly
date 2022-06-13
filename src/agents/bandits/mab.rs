@@ -146,11 +146,6 @@ where
     }
 
     fn reset(&mut self) -> &mut Self {
-        // Reset each arm.
-        self.arms.iter_mut().for_each(|(_, arm)| arm.reset());
-        // Reset the counter.
-        self.count = 0;
-
         self
     }
 
@@ -229,6 +224,14 @@ where
         }
     }
 
+    fn value(&self) -> &V {
+        &self.v
+    }
+
+    fn policy(&self) -> &P {
+        &self.pi
+    }
+
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = A> + 'a> {
         self.v.actions_iter()
     }
@@ -245,11 +248,9 @@ where
         self.pi.call(&self.v, state, rng)
     }
 
-    fn reset(&mut self) -> &mut Self {
-        // Reset the (state-)action value function.
-        self.v.reset();
-        // Reset the policy.
-        self.pi.reset();
+    fn reset(&mut self, state: S) -> &mut Self {
+        // Reset the (state-)action value function to the given initial state.
+        self.v.reset(state);
 
         self
     }

@@ -102,6 +102,8 @@ impl Session for TrainTest {
                 let mut reward;
                 // Reset the environment and get its initial state.
                 let mut state = environment.reset(rng).get_state();
+                // Reset the agent to the given initial state.
+                agent.reset(state.clone());
                 // Set is_done flag to false.
                 let mut is_done = false;
                 // Set the steps counter.
@@ -128,6 +130,8 @@ impl Session for TrainTest {
                 let mut reward;
                 // Reset the environment and get its initial state.
                 let mut state = environment.reset(rng).get_state();
+                // Reset the agent to the given initial state.
+                agent.reset(state.clone());
                 // Set is_done flag to false.
                 let mut is_done = false;
                 // Init the cumulative reward.
