@@ -32,11 +32,11 @@ impl Bernoulli {
 }
 
 impl Arm<f64> for Bernoulli {
-    fn get_count(&self) -> usize {
+    fn count(&self) -> usize {
         self.count
     }
 
-    fn get_sum_squared_rewards(&self) -> f64 {
+    fn sum_squared_rewards(&self) -> f64 {
         self.srewd
     }
 

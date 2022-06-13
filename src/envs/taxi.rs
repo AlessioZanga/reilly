@@ -256,7 +256,7 @@ impl<const D: bool> Env<usize, f64, usize> for Taxi<D> {
         Box::new(0..Self::STATES)
     }
 
-    fn get_state(&self) -> usize {
+    fn state(&self) -> usize {
         self.state
     }
 

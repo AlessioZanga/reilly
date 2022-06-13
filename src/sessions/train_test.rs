@@ -44,7 +44,7 @@ impl TrainTest {
 }
 
 impl Session for TrainTest {
-    fn get_total_episodes(&self) -> usize {
+    fn total_episodes(&self) -> usize {
         self.repeat * self.train
     }
 
@@ -83,7 +83,7 @@ impl Session for TrainTest {
         let mut reps = Vec::with_capacity(capacity);
         // Initialize progress bar.
         let progress = match progress {
-            None => ProgressBar::new(self.get_total_episodes() as u64),
+            None => ProgressBar::new(self.total_episodes() as u64),
             Some(progress) => progress,
         }
         // Set progress message.
@@ -101,7 +101,7 @@ impl Session for TrainTest {
                 // Declare future reward.
                 let mut reward;
                 // Reset the environment and get its initial state.
-                let mut state = environment.reset(rng).get_state();
+                let mut state = environment.reset(rng).state();
                 // Reset the agent to the given initial state.
                 agent.reset(state.clone());
                 // Set is_done flag to false.
@@ -129,7 +129,7 @@ impl Session for TrainTest {
                 // Declare reward.
                 let mut reward;
                 // Reset the environment and get its initial state.
-                let mut state = environment.reset(rng).get_state();
+                let mut state = environment.reset(rng).state();
                 // Reset the agent to the given initial state.
                 agent.reset(state.clone());
                 // Set is_done flag to false.

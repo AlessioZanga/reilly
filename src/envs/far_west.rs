@@ -7,6 +7,10 @@ use serde::{Deserialize, Serialize};
 use super::Env;
 
 /// Environment for multi-armed bandits given a sequence of distributions.
+///
+/// This environment has no terminal state. Use the `steps_max` parameter in
+/// the session to obtain a finite horizon formulation.
+///
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FarWest<D>
 where
@@ -14,15 +18,14 @@ where
 {
     distributions: Vec<D>,
     count: usize,
-    end: usize,
 }
 
 impl<D> FarWest<D>
 where
     D: Clone + Debug + Distribution<f64>,
 {
-    /// Constructs a far-west environment given a sequence of distributions and a time horizon.
-    pub fn new<I>(distributions: I, end: usize) -> Self
+    /// Constructs a far-west environment given a sequence of distributions.
+    pub fn new<I>(distributions: I) -> Self
     where
         I: Iterator<Item = D>,
     {
@@ -31,7 +34,6 @@ where
         Self {
             distributions,
             count: 0,
-            end,
         }
     }
 }
@@ -58,18 +60,16 @@ where
         Box::new([()].into_iter())
     }
 
-    fn get_state(&self) {}
+    fn state(&self) {}
 
     fn call_mut<T>(&mut self, action: usize, rng: &mut T) -> (f64, (), bool)
     where
         T: Rng + ?Sized,
     {
-        // Check if we reached the end of the episode.
-        let is_done = self.count >= self.end;
         // Increment counter.
         self.count += 1;
 
-        (self.distributions[action].sample(rng), (), is_done)
+        (self.distributions[action].sample(rng), (), false)
     }
 
     fn reset<T>(&mut self, _rng: &mut T) -> &mut Self

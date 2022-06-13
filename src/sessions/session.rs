@@ -16,7 +16,7 @@ use crate::{
 /// Definition of agent-environment experiment session.
 pub trait Session: Clone + Debug {
     /// Gets the (expected) total number of episodes.
-    fn get_total_episodes(&self) -> usize;
+    fn total_episodes(&self) -> usize;
 
     /// Execute the experiment session.
     fn call<A, R, S, V, P, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
@@ -70,7 +70,7 @@ pub trait Session: Clone + Debug {
         // FIXME: Generate multiple progress bars.
         let progress = MultiProgress::new();
         let progress: Vec<_> = (0..iter.len())
-            .map(|_| progress.add(ProgressBar::new(self.get_total_episodes() as u64)))
+            .map(|_| progress.add(ProgressBar::new(self.total_episodes() as u64)))
             .collect();
         // For each (agent, environment) pair ...
         let iter = iter

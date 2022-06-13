@@ -116,7 +116,7 @@ where
             ArmsAlgorithm::UCB_1 => {
                 // Cast t and n.
                 let t = R::from(self.count).unwrap();
-                let n = R::from(a.get_count()).unwrap();
+                let n = R::from(a.count()).unwrap();
 
                 a.call() + R::sqrt(R::from(2.).unwrap() * R::ln(t) / n)
             }
@@ -125,11 +125,11 @@ where
             ArmsAlgorithm::UCB_1_NORMAL => {
                 // Cast t and n.
                 let t = R::from(self.count).unwrap();
-                let n = R::from(a.get_count()).unwrap();
+                let n = R::from(a.count()).unwrap();
 
                 // Compute Q(a) and Q(n).
                 let q_a = a.call();
-                let q_n = a.get_sum_squared_rewards();
+                let q_n = a.sum_squared_rewards();
 
                 q_a + R::sqrt(
                     // Constant.

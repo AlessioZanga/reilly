@@ -48,7 +48,7 @@ mod sessions {
                 ]
                 .into_iter()
                 .map(|d| d.unwrap());
-                let mut env = FarWest::new(env, 500);
+                let mut env = FarWest::new(env);
                 // Initialize the agent.
                 let agent = env.actions_iter().map(|a| (a, arms::Bernoulli::new(1., 1.)));
                 let mut agent = MultiArmedBandit::new(
@@ -58,7 +58,7 @@ mod sessions {
                     EpsilonDecayGreedy::new(0.99, 0.999, 0.01),
                 );
                 // Execute the experiment session.
-                let session = TrainTest::new(100, 30, 100);
+                let session = TrainTest::new(100, 30, 100).with_steps_max(500);
                 let mut data = session.call(&mut agent, &mut env, &mut rng);
                 // Write data to CSV.
                 let mut file = File::create("tests/out-train_test-call-mab.csv").unwrap();
@@ -93,7 +93,7 @@ mod sessions {
                         EpsilonGreedy::new(0.4),
                     );
                     // Execute the experiment session.
-                    let session = TrainTest::new(100, 10, 500);
+                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-first_visit.csv").unwrap();
@@ -135,7 +135,7 @@ mod sessions {
             ]
             .into_iter()
             .map(|d| d.unwrap());
-            let env = FarWest::new(env, 500);
+            let env = FarWest::new(env);
             // Initialize the MABs.
             let mabs: Vec<_> = env.actions_iter().map(|a| (a, arms::Bernoulli::new(1., 1.))).collect();
             let mabs = [0.025, 0.050, 0.075, 0.10, 0.15, 0.20, 0.25].into_iter().map(|e| {
@@ -149,7 +149,7 @@ mod sessions {
             // Pair each agent with its environment.
             let mut mabs_envs: Vec<_> = mabs.zip(std::iter::repeat(env)).collect();
             // Execute the experiment session.
-            let session = TrainTest::new(10, 3, 100);
+            let session = TrainTest::new(10, 3, 100).with_steps_max(500);
             let mut data = session.par_call(mabs_envs.par_iter_mut(), &mut rng);
             // Write data to CSV.
             let mut file = File::create("tests/out-train_test-par_call.csv").unwrap();

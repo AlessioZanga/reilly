@@ -223,7 +223,7 @@ impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for Fr
         Box::new(0..Self::STATES)
     }
 
-    fn get_state(&self) -> usize {
+    fn state(&self) -> usize {
         self.state
     }
 
