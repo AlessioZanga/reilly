@@ -1,11 +1,12 @@
 use std::fmt::{Display, Formatter};
 
 use rand::{prelude::SliceRandom, Rng};
+use serde::{Serialize, Deserialize};
 
 use super::Env;
 
 /// Port of `Blackjack-v1` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/9acf9cd367fb1ea97ac1e394969df87fd9a0d5c9/gym/envs/toy_text/blackjack.py).
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BlackjackGeneric<const N: bool, const S: bool> {
     state: usize,
     dealer: Vec<usize>,
@@ -85,8 +86,8 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
     pub fn new() -> Self {
         Self {
             state: 0,
-            dealer: Default::default(),
-            player: Default::default(),
+            dealer: vec![1, 2],
+            player: vec![3, 4],
         }
     }
 }

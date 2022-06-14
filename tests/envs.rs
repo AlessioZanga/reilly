@@ -330,4 +330,70 @@ mod envs {
             let _: FrozenLake4x4Slippery = serde_json::from_str(&json).unwrap();
         }
     }
+
+    mod blackjack {
+        use std::collections::BTreeSet;
+
+        use rand::SeedableRng;
+        use rand_xoshiro::Xoshiro256PlusPlus;
+        use reilly::envs::{Env, Blackjack};
+
+        #[test]
+        fn actions_iter() {
+            let env = Blackjack::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.actions_iter()),
+                BTreeSet::from_iter(0..Blackjack::ACTIONS),
+            );
+        }
+
+        #[test]
+        fn states_iter() {
+            let env = Blackjack::new();
+
+            assert_eq!(
+                BTreeSet::from_iter(env.states_iter()),
+                BTreeSet::from_iter(0..Blackjack::STATES),
+            );
+        }
+
+        #[test]
+        fn state() {
+            let env = Blackjack::new();
+
+            assert_eq!(env.state(), 0);
+        }
+
+        #[test]
+        fn call_mut() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = Blackjack::new();
+
+            env.call_mut(0, &mut rng);
+        }
+
+        #[test]
+        fn reset() {
+            let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
+            let mut env = Blackjack::new();
+
+            env.reset(&mut rng);
+        }
+
+        #[test]
+        fn serialize() {
+            let env = Blackjack::new();
+
+            serde_json::to_string(&env).unwrap();
+        }
+
+        #[test]
+        fn deserialize() {
+            let env = Blackjack::new();
+
+            let json = serde_json::to_string(&env).unwrap();
+            let _: Blackjack = serde_json::from_str(&json).unwrap();
+        }
+    }
 }

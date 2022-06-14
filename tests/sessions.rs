@@ -93,7 +93,7 @@ mod sessions {
                         EpsilonGreedy::new(0.4),
                     );
                     // Execute the experiment session.
-                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
+                    let session = TrainTest::new(100, 30, 100).with_steps_max(500);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-first_visit.csv").unwrap();
@@ -112,7 +112,7 @@ mod sessions {
                         EpsilonDecayGreedy::new(0.99, 0.9999, 0.01),
                     );
                     // Execute the experiment session with maximum number of steps per episode set to 500.
-                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
+                    let session = TrainTest::new(100, 30, 100).with_steps_max(500);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-every_visit.csv").unwrap();
