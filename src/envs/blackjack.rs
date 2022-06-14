@@ -36,7 +36,7 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
         vec![Self::draw_card(rng), Self::draw_card(rng)]
     }
 
-    fn usable_ace(hand: &Vec<usize>) -> bool {
+    fn usable_ace(hand: &[usize]) -> bool {
         let (flag, sum) = hand
             .iter()
             .fold((false, 0), |(flag, sum), &h| (flag || h == 1, sum + h));
@@ -44,17 +44,17 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
         flag && sum + 10 <= 21
     }
 
-    fn sum_hand(hand: &Vec<usize>) -> usize {
+    fn sum_hand(hand: &[usize]) -> usize {
         let sum: usize = hand.iter().cloned().sum();
 
         sum + (Self::usable_ace(hand) as usize) * 10
     }
 
-    fn is_bust(hand: &Vec<usize>) -> bool {
+    fn is_bust(hand: &[usize]) -> bool {
         Self::sum_hand(hand) > 21
     }
 
-    fn score(hand: &Vec<usize>) -> f64 {
+    fn score(hand: &[usize]) -> f64 {
         if Self::is_bust(hand) {
             0.
         } else {
@@ -62,8 +62,8 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
         }
     }
 
-    fn is_natural(hand: &Vec<usize>) -> bool {
-        hand == &[1, 10] || hand == &[10, 1]
+    fn is_natural(hand: &[usize]) -> bool {
+        hand == [1, 10] || hand == [10, 1]
     }
 
     fn cmp(a: f64, b: f64) -> f64 {
