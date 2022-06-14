@@ -71,10 +71,12 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
 
     fn get_obs(&self) -> usize {
         let mut i = Self::sum_hand(&self.player);
-        i *= 32;
-        i += self.dealer[0];
         i *= 11;
+        i += self.dealer[0];
+        i *= 2;
         i += Self::usable_ace(&self.player) as usize;
+
+        debug_assert!(i < Self::STATES);
 
         i
     }
@@ -91,7 +93,12 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
 
 impl<const N: bool, const S: bool> Display for BlackjackGeneric<N, S> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Blackjack-v1")
+        write!(
+            f,
+            "Blackjack{}{}-v1",
+            if N { "-Natural" } else { "" },
+            if S { "-SAB" } else { "" }
+        )
     }
 }
 
