@@ -13,7 +13,7 @@ use super::Env;
 
 /// Port of `FrozenLake-v1` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/0263deb5ab8dce46b1056f5baa2c7c141fad9471/gym/envs/toy_text/frozen_lake.py).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct FrozenLake<const N: usize, const S: bool, const D: bool> {
+pub struct FrozenLakeGeneric<const N: usize, const S: bool, const D: bool> {
     state: usize,
     p_states_0: Array1<f64>,
     probability_matrix: Array2<f64>,
@@ -22,7 +22,7 @@ pub struct FrozenLake<const N: usize, const S: bool, const D: bool> {
     is_terminal: Array2<bool>,
 }
 
-impl<const N: usize, const S: bool, const D: bool> FrozenLake<N, S, D> {
+impl<const N: usize, const S: bool, const D: bool> FrozenLakeGeneric<N, S, D> {
     /// Textual representation of the environment map.
     #[rustfmt::skip]
     pub const MAP: &'static str = match N {
@@ -49,9 +49,9 @@ impl<const N: usize, const S: bool, const D: bool> FrozenLake<N, S, D> {
     const COLS: usize = N;
 
     /// Cardinality of the states space.
-    pub const STATES: usize = Self::ROWS * Self::COLS;
-    /// Cardinality of the states space.
     pub const ACTIONS: usize = 4;
+    /// Cardinality of the states space.
+    pub const STATES: usize = Self::ROWS * Self::COLS;
 
     const fn to_s(row: usize, col: usize) -> usize {
         row * Self::COLS + col
@@ -202,19 +202,19 @@ impl<const N: usize, const S: bool, const D: bool> FrozenLake<N, S, D> {
     }
 }
 
-impl<const N: usize, const S: bool, const D: bool> Default for FrozenLake<N, S, D> {
+impl<const N: usize, const S: bool, const D: bool> Default for FrozenLakeGeneric<N, S, D> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<const N: usize, const S: bool, const D: bool> Display for FrozenLake<N, S, D> {
+impl<const N: usize, const S: bool, const D: bool> Display for FrozenLakeGeneric<N, S, D> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "FrozenLake-{}x{}{}-v1", N, N, if S { "-Slippery" } else { "" })
     }
 }
 
-impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for FrozenLake<N, S, D> {
+impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for FrozenLakeGeneric<N, S, D> {
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = usize> + 'a> {
         Box::new(0..Self::ACTIONS)
     }
@@ -273,18 +273,18 @@ impl<const N: usize, const S: bool, const D: bool> Env<usize, f64, usize> for Fr
 }
 
 /// `FrozenLake-v1` with 4x4 map, no slippery and no display.
-pub type FrozenLake4x4 = FrozenLake<4, false, false>;
+pub type FrozenLake4x4 = FrozenLakeGeneric<4, false, false>;
 /// `FrozenLake-v1` with 8x8 map, no slippery and no display.
-pub type FrozenLake8x8 = FrozenLake<8, false, false>;
+pub type FrozenLake8x8 = FrozenLakeGeneric<8, false, false>;
 /// `FrozenLake-v1` with 4x4 map, slippery and no display.
-pub type FrozenLake4x4Slippery = FrozenLake<4, true, false>;
+pub type FrozenLake4x4Slippery = FrozenLakeGeneric<4, true, false>;
 /// `FrozenLake-v1` with 8x8 map, slippery and no display.
-pub type FrozenLake8x8Slippery = FrozenLake<8, true, false>;
+pub type FrozenLake8x8Slippery = FrozenLakeGeneric<8, true, false>;
 /// `FrozenLake-v1` with 4x4 map, no slippery and display.
-pub type FrozenLake4x4WithDisplay = FrozenLake<4, false, true>;
+pub type FrozenLake4x4WithDisplay = FrozenLakeGeneric<4, false, true>;
 /// `FrozenLake-v1` with 8x8 map, no slippery and display.
-pub type FrozenLake8x8WithDisplay = FrozenLake<8, false, true>;
+pub type FrozenLake8x8WithDisplay = FrozenLakeGeneric<8, false, true>;
 /// `FrozenLake-v1` with 4x4 map, slippery and display.
-pub type FrozenLake4x4SlipperyWithDisplay = FrozenLake<4, true, true>;
+pub type FrozenLake4x4SlipperyWithDisplay = FrozenLakeGeneric<4, true, true>;
 /// `FrozenLake-v1` with 8x8 map, slippery and display.
-pub type FrozenLake8x8SlipperyWithDisplay = FrozenLake<8, true, true>;
+pub type FrozenLake8x8SlipperyWithDisplay = FrozenLakeGeneric<8, true, true>;

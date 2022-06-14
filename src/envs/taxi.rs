@@ -13,7 +13,7 @@ use super::Env;
 
 /// Port of `Taxi-v3` from `OpenAI/Gym` as [here](https://github.com/openai/gym/blob/b704d4660e45edc7bb674a6c971d376990d340dc/gym/envs/toy_text/taxi.py).
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Taxi<const D: bool> {
+pub struct TaxiGeneric<const D: bool> {
     state: usize,
     p_states_0: Array1<f64>,
     transition_matrix: Array2<usize>,
@@ -21,7 +21,7 @@ pub struct Taxi<const D: bool> {
     is_terminal: Array2<bool>,
 }
 
-impl<const D: bool> Taxi<D> {
+impl<const D: bool> TaxiGeneric<D> {
     /// Textual representation of the environment map.
     pub const MAP: &'static str = concat!(
         "+---------+",
@@ -45,9 +45,9 @@ impl<const D: bool> Taxi<D> {
     const MAX_COL: usize = Self::COLS - 1;
 
     /// Cardinality of the states space.
-    pub const STATES: usize = 500;
-    /// Cardinality of the states space.
     pub const ACTIONS: usize = 6;
+    /// Cardinality of the states space.
+    pub const STATES: usize = 500;
 
     const LOCS: [(usize, usize); 4] = [(0, 0), (0, 4), (4, 0), (4, 3)];
 
@@ -68,7 +68,8 @@ impl<const D: bool> Taxi<D> {
         let (pass_idx, i) = (i % Self::COLS, i / Self::COLS);
         let (taxi_col, i) = (i % Self::ROWS, i / Self::ROWS);
         let taxi_row = i;
-        assert!(i < 5);
+
+        debug_assert!(i < 5);
 
         (taxi_row, taxi_col, pass_idx, dest_idx)
     }
@@ -235,19 +236,19 @@ impl<const D: bool> Taxi<D> {
     }
 }
 
-impl<const D: bool> Default for Taxi<D> {
+impl<const D: bool> Default for TaxiGeneric<D> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<const D: bool> Display for Taxi<D> {
+impl<const D: bool> Display for TaxiGeneric<D> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "Taxi-v3")
     }
 }
 
-impl<const D: bool> Env<usize, f64, usize> for Taxi<D> {
+impl<const D: bool> Env<usize, f64, usize> for TaxiGeneric<D> {
     fn actions_iter<'a>(&'a self) -> Box<dyn ExactSizeIterator<Item = usize> + 'a> {
         Box::new(0..Self::ACTIONS)
     }
@@ -296,6 +297,6 @@ impl<const D: bool> Env<usize, f64, usize> for Taxi<D> {
 }
 
 /// `Taxi-v3` with no display.
-pub type TaxiNoDisplay = Taxi<false>;
+pub type Taxi = TaxiGeneric<false>;
 /// `Taxi-v3` with display.
-pub type TaxiWithDisplay = Taxi<true>;
+pub type TaxiWithDisplay = TaxiGeneric<true>;
