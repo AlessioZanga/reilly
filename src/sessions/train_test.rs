@@ -48,13 +48,7 @@ impl Session for TrainTest {
         self.repeat * self.train
     }
 
-    fn call_with_bar<A, R, S, V, P, G, E, T>(
-        &self,
-        agent: &mut G,
-        environment: &mut E,
-        rng: &mut T,
-        progress: Option<ProgressBar>,
-    ) -> DataFrame
+    fn call<A, R, S, V, P, G, E, T>(&self, agent: &mut G, environment: &mut E, rng: &mut T) -> DataFrame
     where
         A: Action,
         R: Reward,
@@ -76,24 +70,24 @@ impl Session for TrainTest {
             HashSet::<S>::from_iter(environment.states_iter()),
             "Agent and environment have different states-space"
         );
-        // Allocate memory for data collection.
+
+        // Allocate memory for data collection, i.e. episodes, folds, rewards.
         let capacity = self.repeat * self.test;
+        let mut epsd = Vec::with_capacity(capacity);
+        let mut fold = Vec::with_capacity(capacity);
         let mut rewd = Vec::with_capacity(capacity);
-        let mut test = Vec::with_capacity(capacity);
-        let mut reps = Vec::with_capacity(capacity);
+
         // Initialize progress bar.
-        let progress = match progress {
-            None => ProgressBar::new(self.total_episodes() as u64),
-            Some(progress) => progress,
-        }
-        // Set progress message.
-        .with_message("Executing train-test");
+        let progress = ProgressBar::new(self.total_episodes() as u64)
+            // Set progress message.
+            .with_message("Executing train-test");
         // Set progress bar style.
         progress.set_style(ProgressStyle::default_bar().template(
             "{spinner} {msg}... ({percent}%) {wide_bar} [{pos}/{len}][{elapsed_precise}/{eta_precise}][{per_sec}]",
         ));
         // Print progress layout.
         progress.tick();
+
         // For each fold ...
         for i in 0..self.repeat {
             // ... perform n train episodes, then ...
@@ -152,24 +146,26 @@ impl Session for TrainTest {
                     steps += 1;
                 }
                 // Record the cumulative reward.
+                epsd.push(i as u64);
+                fold.push(j as u64);
                 rewd.push(cum_reward.to_f64().unwrap());
-                test.push(j as u64);
-                reps.push(i as u64);
             }
         }
+
         // Close progress.
         progress.finish();
 
         // Cast data to polars DataFrame.
-        let reps = Series::from_vec("rep", reps);
-        let test = Series::from_vec("test", test);
+        let epsd = Series::from_vec("episode", epsd);
+        let fold = Series::from_vec("fold", fold);
         let rewd = Series::from_vec("reward", rewd);
+
         // Set agent and environment names.
         let mut agns = Series::from_iter(std::iter::repeat(agent.to_string()).take(capacity));
         agns.rename("agent");
         let mut envs = Series::from_iter(std::iter::repeat(environment.to_string()).take(capacity));
         envs.rename("environment");
 
-        DataFrame::new(vec![envs, agns, reps, test, rewd]).expect("Unable to cast collected data to DataFrame")
+        DataFrame::new(vec![envs, agns, epsd, fold, rewd]).expect("Unable to cast collected data to DataFrame")
     }
 }
