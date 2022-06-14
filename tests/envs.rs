@@ -336,7 +336,7 @@ mod envs {
 
         use rand::SeedableRng;
         use rand_xoshiro::Xoshiro256PlusPlus;
-        use reilly::envs::{Env, Blackjack};
+        use reilly::envs::{Blackjack, Env};
 
         #[test]
         fn actions_iter() {

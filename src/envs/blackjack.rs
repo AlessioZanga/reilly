@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 
 use rand::{prelude::SliceRandom, Rng};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use super::Env;
 
