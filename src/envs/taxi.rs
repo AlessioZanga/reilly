@@ -60,10 +60,12 @@ impl<const D: bool> TaxiGeneric<D> {
         i *= Self::LOCS.len();
         i += dest_idx;
 
+        debug_assert!(i < Self::STATES);
+
         i
     }
 
-    fn decode(i: usize) -> (usize, usize, usize, usize) {
+    const fn decode(i: usize) -> (usize, usize, usize, usize) {
         let (dest_idx, i) = (i % Self::LOCS.len(), i / Self::LOCS.len());
         let (pass_idx, i) = (i % Self::COLS, i / Self::COLS);
         let (taxi_col, i) = (i % Self::ROWS, i / Self::ROWS);
@@ -183,7 +185,7 @@ impl<const D: bool> TaxiGeneric<D> {
         }
     }
 
-    /// Renders the environment in a text-based mod.
+    /// Renders the environment in a text-based mode.
     pub fn render(&self) -> std::io::Result<()> {
         // Decode current state ...
         let (taxi_row, taxi_col, pass_idx, dest_idx) = Self::decode(self.state);

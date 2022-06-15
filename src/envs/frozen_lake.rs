@@ -168,7 +168,7 @@ impl<const N: usize, const S: bool, const D: bool> FrozenLakeGeneric<N, S, D> {
         }
     }
 
-    /// Renders the environment in a text-based mod.
+    /// Renders the environment in a text-based mode.
     pub fn render(&self) -> std::io::Result<()> {
         // Get terminal handle.
         let terminal = Term::stdout();

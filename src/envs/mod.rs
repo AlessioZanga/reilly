@@ -4,6 +4,9 @@ pub use env::Env;
 mod blackjack;
 pub use blackjack::*;
 
+mod cliff_walking;
+pub use cliff_walking::*;
+
 mod far_west;
 pub use far_west::FarWest;
 

@@ -70,12 +70,12 @@ impl<const N: bool, const S: bool> BlackjackGeneric<N, S> {
         (a > b) as usize as f64 - (a < b) as usize as f64
     }
 
-    fn get_obs(&self) -> usize {
-        let mut i = Self::sum_hand(&self.player);
+    fn encode(player: &[usize], dealer: &[usize]) -> usize {
+        let mut i = Self::sum_hand(player);
         i *= 11;
-        i += self.dealer[0];
+        i += dealer[0];
         i *= 2;
-        i += Self::usable_ace(&self.player) as usize;
+        i += Self::usable_ace(player) as usize;
 
         debug_assert!(i < Self::STATES);
 
@@ -120,7 +120,7 @@ impl<const N: bool, const S: bool> Env<usize, f64, usize> for BlackjackGeneric<N
     where
         T: rand::Rng + ?Sized,
     {
-        self.state = self.get_obs();
+        self.state = Self::encode(&self.player, &self.dealer);
 
         let mut reward = 0.;
         let mut done = false;
@@ -165,7 +165,7 @@ impl<const N: bool, const S: bool> Env<usize, f64, usize> for BlackjackGeneric<N
         self.dealer = Self::draw_hand(rng);
         self.player = Self::draw_hand(rng);
 
-        self.state = self.get_obs();
+        self.state = Self::encode(&self.player, &self.dealer);
 
         self
     }
