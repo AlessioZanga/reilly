@@ -8,6 +8,7 @@ mod envs {
         use reilly::envs::{Env, FarWest};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = [
                 Normal::new(0., 1.),
@@ -189,6 +190,7 @@ mod envs {
         use reilly::envs::{Env, Taxi, TaxiWithDisplay};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = Taxi::new();
 
@@ -284,6 +286,7 @@ mod envs {
         use reilly::envs::{Env, FrozenLake4x4, FrozenLake4x4WithDisplay};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = FrozenLake4x4::new();
 
@@ -379,6 +382,7 @@ mod envs {
         use reilly::envs::{Env, FrozenLake4x4Slippery, FrozenLake4x4SlipperyWithDisplay};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = FrozenLake4x4Slippery::new();
 
@@ -474,6 +478,7 @@ mod envs {
         use reilly::envs::{Blackjack, Env};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = Blackjack::new();
 
@@ -561,6 +566,7 @@ mod envs {
         use reilly::envs::{CliffWalking, CliffWalkingWithDisplay, Env};
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let env = CliffWalking::new();
 

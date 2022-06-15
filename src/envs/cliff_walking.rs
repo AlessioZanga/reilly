@@ -58,7 +58,7 @@ impl<const D: bool> CliffWalkingGeneric<D> {
         let new_state = Self::encode(row, col);
 
         // If we reached the cliff[3, 1:-1] ...
-        if row == 3 && (col >= 1 && col < Self::COLS) {
+        if row == 3 && (1..Self::COLS).contains(&col) {
             // ... then we fall.
             return (Self::encode(3, 0), -100., false);
         }
@@ -112,7 +112,7 @@ impl<const D: bool> CliffWalkingGeneric<D> {
                     "S"
                 } else if (row, col) == (Self::ROWS - 1, Self::COLS - 1) {
                     "T"
-                } else if row == 3 && (col >= 1 && col < Self::COLS) {
+                } else if row == 3 && (1..Self::COLS).contains(&col) {
                     "C"
                 } else {
                     "o"
@@ -123,9 +123,9 @@ impl<const D: bool> CliffWalkingGeneric<D> {
                     text = format!("{}", style(text).on_red());
                 }
 
-                terminal.write(text.as_bytes())?;
+                terminal.write_all(text.as_bytes())?;
             }
-            terminal.write(&[b'\n'])?;
+            terminal.write_all(&[b'\n'])?;
         }
         // Reset cursor.
         terminal.move_cursor_up(Self::ROWS)?;

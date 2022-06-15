@@ -9,6 +9,7 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let pi = Greedy::new();
 
@@ -96,6 +97,7 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let pi = EpsilonGreedy::new(0.10);
 
@@ -182,6 +184,7 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
 
@@ -259,6 +262,7 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
         fn clone() {
             let pi = Random::new();
 
