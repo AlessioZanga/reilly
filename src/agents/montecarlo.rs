@@ -80,8 +80,6 @@ impl StateActionValue<usize, f64, usize> for FirstVisit<usize, f64, usize> {
         self.state = state;
         // Reset trajectory.
         self.trajectory.clear();
-        // Reset counter.
-        self.n.fill(0);
 
         self
     }
@@ -181,8 +179,6 @@ impl StateActionValue<usize, f64, usize> for EveryVisit<usize, f64, usize> {
         self.state = state;
         // Reset trajectory.
         self.trajectory.clear();
-        // Reset counter.
-        self.n.fill(0);
 
         self
     }

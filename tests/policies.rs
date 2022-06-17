@@ -9,6 +9,28 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
+        fn clone() {
+            let pi = Greedy::new();
+
+            let _ = pi.clone();
+        }
+
+        #[test]
+        fn debug() {
+            let pi = Greedy::new();
+
+            println!("{:?}", pi);
+        }
+
+        #[test]
+        fn display() {
+            let pi = Greedy::new();
+
+            println!("{}", pi);
+        }
+
+        #[test]
         fn call() {
             // Initialize the random number generator.
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
@@ -73,6 +95,28 @@ mod policies {
             agents::bandits::{arms::Bernoulli, ExpectedValueArms},
             policies::{EpsilonGreedy, Policy},
         };
+
+        #[test]
+        #[allow(clippy::redundant_clone)]
+        fn clone() {
+            let pi = EpsilonGreedy::new(0.10);
+
+            let _ = pi.clone();
+        }
+
+        #[test]
+        fn debug() {
+            let pi = EpsilonGreedy::new(0.10);
+
+            println!("{:?}", pi);
+        }
+
+        #[test]
+        fn display() {
+            let pi = EpsilonGreedy::new(0.10);
+
+            println!("{}", pi);
+        }
 
         #[test]
         fn call() {
@@ -140,6 +184,28 @@ mod policies {
         };
 
         #[test]
+        #[allow(clippy::redundant_clone)]
+        fn clone() {
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
+
+            let _ = pi.clone();
+        }
+
+        #[test]
+        fn debug() {
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
+
+            println!("{:?}", pi);
+        }
+
+        #[test]
+        fn display() {
+            let pi = EpsilonDecayGreedy::new(0.1, 0.999, 0.01);
+
+            println!("{}", pi);
+        }
+
+        #[test]
         fn call() {
             let mut rng: Xoshiro256PlusPlus = SeedableRng::from_entropy();
 
@@ -194,6 +260,28 @@ mod policies {
             policies::{Policy, Random},
             values::StateActionValue,
         };
+
+        #[test]
+        #[allow(clippy::redundant_clone)]
+        fn clone() {
+            let pi = Random::new();
+
+            let _ = pi.clone();
+        }
+
+        #[test]
+        fn debug() {
+            let pi = Random::new();
+
+            println!("{:?}", pi);
+        }
+
+        #[test]
+        fn display() {
+            let pi = Random::new();
+
+            println!("{}", pi);
+        }
 
         #[test]
         fn call() {

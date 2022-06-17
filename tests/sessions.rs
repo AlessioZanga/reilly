@@ -58,7 +58,7 @@ mod sessions {
                     EpsilonDecayGreedy::new(0.99, 0.999, 0.01),
                 );
                 // Execute the experiment session.
-                let session = TrainTest::new(100, 30, 100).with_steps_max(500);
+                let session = TrainTest::new(100, 30, 100).with_steps_max(100);
                 let mut data = session.call(&mut agent, &mut env, &mut rng);
                 // Write data to CSV.
                 let mut file = File::create("tests/out-train_test-call-mab.csv").unwrap();
@@ -93,7 +93,7 @@ mod sessions {
                         EpsilonGreedy::new(0.4),
                     );
                     // Execute the experiment session.
-                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
+                    let session = TrainTest::new(100, 30, 100).with_steps_max(100);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-first_visit.csv").unwrap();
@@ -111,8 +111,8 @@ mod sessions {
                         EveryVisit::new(env.actions_iter(), env.states_iter(), 0.9),
                         EpsilonDecayGreedy::new(0.99, 0.9999, 0.01),
                     );
-                    // Execute the experiment session with maximum number of steps per episode set to 500.
-                    let session = TrainTest::new(100, 10, 500).with_steps_max(500);
+                    // Execute the experiment session with maximum number of steps per episode set to 100.
+                    let session = TrainTest::new(100, 30, 100).with_steps_max(100);
                     let mut data = session.call(&mut agent, &mut env, &mut rng);
                     // Write data to CSV.
                     let mut file = File::create("tests/out-train_test-call-monte_carlo-every_visit.csv").unwrap();
@@ -149,7 +149,7 @@ mod sessions {
             // Pair each agent with its environment.
             let mut mabs_envs: Vec<_> = mabs.zip(std::iter::repeat(env)).collect();
             // Execute the experiment session.
-            let session = TrainTest::new(10, 3, 100).with_steps_max(500);
+            let session = TrainTest::new(10, 3, 100).with_steps_max(100);
             let mut data = session.par_call(mabs_envs.par_iter_mut(), &mut rng);
             // Write data to CSV.
             let mut file = File::create("tests/out-train_test-par_call.csv").unwrap();
